@@ -48,9 +48,6 @@ END_MESSAGE_MAP()
 
 // CTransGlassDlg dialog
 
-
-
-
 CTransGlassDlg::CTransGlassDlg(CWnd* pParent /*=NULL*/)
     : CDialogEx(CTransGlassDlg::IDD, pParent)
 {
@@ -70,7 +67,8 @@ BEGIN_MESSAGE_MAP(CTransGlassDlg, CDialogEx)
     ON_WM_QUERYDRAGICON()
     ON_WM_HOTKEY()
     ON_MESSAGE(WM_NOTIFYICON, OnNotifyIcon)
-    ON_BN_CLICKED(IDC_BTN_TRAY, &CTransGlassDlg::OnBnClickedBtnMinToTray)
+    ON_BN_CLICKED(IDC_BTN_TRAY, &CTransGlassDlg::OnBnClickedBtnTray)
+    ON_BN_CLICKED(IDC_BTN_OPT, &CTransGlassDlg::OnBnClickedBtnOpt)
 END_MESSAGE_MAP()
 
 
@@ -117,7 +115,7 @@ BOOL CTransGlassDlg::OnInitDialog()
     InitNotifyIconData();
 
     if (! m_bInitShow) {
-        PostMessage(WM_COMMAND, IDC_BTN_TRAY);
+        PostMessage(WM_SYSCOMMAND, SC_CLOSE);
     }
 
     return TRUE;  // return TRUE  unless you set the focus to a control
@@ -138,11 +136,19 @@ BOOL CTransGlassDlg::DestroyWindow()
 }
 
 
+void CTransGlassDlg::OnCancel()
+{
+    // Hook: disable ESC for exiting the app.
+}
+
+
 void CTransGlassDlg::OnSysCommand(UINT nID, LPARAM lParam)
 {
     if ((nID & 0xFFF0) == IDM_ABOUTBOX) {
         CAboutDlg dlgAbout;
         dlgAbout.DoModal();
+    } else if ((nID & 0xFFF0) == SC_CLOSE) {
+        MinimizeToTray();
     } else {
         CDialogEx::OnSysCommand(nID, lParam);
     }
@@ -237,10 +243,14 @@ LRESULT CTransGlassDlg::OnNotifyIcon(WPARAM wParam, LPARAM lParam)
 }
 
 
-void CTransGlassDlg::OnBnClickedBtnMinToTray()
+void CTransGlassDlg::OnBnClickedBtnTray()
 {
-    ShowWindow(SW_HIDE);
-    Shell_NotifyIcon(NIM_ADD, &m_notifyIcon);
+    MinimizeToTray();
+}
+
+
+void CTransGlassDlg::OnBnClickedBtnOpt()
+{
 }
 
 
@@ -298,4 +308,11 @@ void CTransGlassDlg::InitNotifyIconData()
     m_notifyIcon.hIcon  = LoadIcon(AfxGetInstanceHandle(),
                                    MAKEINTRESOURCE(IDR_MAINFRAME));
     _tcscpy_s(m_notifyIcon.szTip, TEXT(APPLICATION_NAME));
+}
+
+
+void CTransGlassDlg::MinimizeToTray()
+{
+    ShowWindow(SW_HIDE);
+    Shell_NotifyIcon(NIM_ADD, &m_notifyIcon);
 }

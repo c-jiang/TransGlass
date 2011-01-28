@@ -43,9 +43,11 @@ BOOL CTransGlassApp::InitInstance()
 
     CWinApp::InitInstance();
 
+#if 0
     // Create the shell manager, in case the dialog contains
     // any shell tree view or shell list view controls.
     CShellManager *pShellManager = new CShellManager;
+#endif
 
     // Standard initialization
     // If you are not using these features and wish to reduce the size
@@ -64,10 +66,12 @@ BOOL CTransGlassApp::InitInstance()
         //  dismissed with Cancel
     }
 
+#if 0
     // Delete the shell manager created above.
     if (pShellManager != NULL) {
         delete pShellManager;
     }
+#endif
 
     // Since the dialog has been closed, return FALSE so that we exit the
     //  application, rather than start the application's message pump.

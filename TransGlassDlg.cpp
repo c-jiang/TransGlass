@@ -12,6 +12,9 @@
 #endif
 
 
+#define WM_NOTIFYICON           (WM_USER + 101)
+
+
 // CAboutDlg dialog used for App About
 
 class CAboutDlg : public CDialogEx
@@ -53,6 +56,7 @@ CTransGlassDlg::CTransGlassDlg(CWnd* pParent /*=NULL*/)
 {
     m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
     UpdateAlphaSteps();
+    m_bInitShow = false;
 }
 
 void CTransGlassDlg::DoDataExchange(CDataExchange* pDX)
@@ -65,6 +69,8 @@ BEGIN_MESSAGE_MAP(CTransGlassDlg, CDialogEx)
     ON_WM_PAINT()
     ON_WM_QUERYDRAGICON()
     ON_WM_HOTKEY()
+    ON_MESSAGE(WM_NOTIFYICON, OnNotifyIcon)
+    ON_BN_CLICKED(IDC_BTN_TRAY, &CTransGlassDlg::OnBnClickedBtnMinToTray)
 END_MESSAGE_MAP()
 
 
@@ -107,6 +113,13 @@ BOOL CTransGlassDlg::OnInitDialog()
             MOD_CONTROL,// | MOD_ALT,
             VK_DOWN);
 
+    // Create the tray icon in the system tray.
+    InitNotifyIconData();
+
+    if (! m_bInitShow) {
+        PostMessage(WM_COMMAND, IDC_BTN_TRAY);
+    }
+
     return TRUE;  // return TRUE  unless you set the focus to a control
 }
 
@@ -117,6 +130,9 @@ BOOL CTransGlassDlg::DestroyWindow()
     for (int i = HOTKEY_ID_01; i < HOTKEY_ID_MAX; ++i) {
         UnregisterHotKey(this->GetSafeHwnd(), i);
     }
+
+    // Remove the icon in the system tray.
+    Shell_NotifyIcon(NIM_DELETE, &m_notifyIcon);
 
     return CDialogEx::DestroyWindow();
 }
@@ -205,6 +221,29 @@ void CTransGlassDlg::OnHotKey(UINT nHotKeyId, UINT nKey1, UINT nKey2)
 }
 
 
+LRESULT CTransGlassDlg::OnNotifyIcon(WPARAM wParam, LPARAM lParam)
+{
+    TRACE(">>> %s(%u, %lu)\n", __FUNCTION__, wParam, lParam);
+
+    if ((lParam == WM_LBUTTONDOWN) || (lParam == WM_RBUTTONDOWN)) {
+        // TODO
+        ModifyStyleEx(0, WS_EX_TOPMOST);
+        ShowWindow(SW_SHOW);
+        Shell_NotifyIcon(NIM_DELETE, &m_notifyIcon);
+    }
+
+    TRACE("<<< %s(%u, %lu)\n", __FUNCTION__, wParam, lParam);
+    return 0;
+}
+
+
+void CTransGlassDlg::OnBnClickedBtnMinToTray()
+{
+    ShowWindow(SW_HIDE);
+    Shell_NotifyIcon(NIM_ADD, &m_notifyIcon);
+}
+
+
 bool CTransGlassDlg::GetWindowAlpha(CWnd* pHwnd, BYTE* pbAlpha)
 {
     bool bRetVal = true;
@@ -246,4 +285,17 @@ void CTransGlassDlg::UpdateAlphaSteps()
         iAlphaMin -= (int) m_bAlphaStep;
     }
     m_bAlphaMin = (BYTE) (iAlphaMin + m_bAlphaStep);
+}
+
+
+void CTransGlassDlg::InitNotifyIconData()
+{
+    m_notifyIcon.cbSize = (DWORD) sizeof(NOTIFYICONDATA);
+    m_notifyIcon.hWnd   = this->m_hWnd;
+    m_notifyIcon.uID    = IDR_MAINFRAME;
+    m_notifyIcon.uFlags = NIF_ICON | NIF_MESSAGE | NIF_TIP;
+    m_notifyIcon.uCallbackMessage = WM_NOTIFYICON;
+    m_notifyIcon.hIcon  = LoadIcon(AfxGetInstanceHandle(),
+                                   MAKEINTRESOURCE(IDR_MAINFRAME));
+    _tcscpy_s(m_notifyIcon.szTip, TEXT(APPLICATION_NAME));
 }

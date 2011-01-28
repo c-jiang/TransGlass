@@ -11,9 +11,8 @@
 #include "resource.h"		// main symbols
 
 
-// CTransGlassApp:
-// See TransGlass.cpp for the implementation of this class
-//
+#define APPLICATION_NAME        "Transparent Glass"
+
 
 class CTransGlassApp : public CWinApp
 {

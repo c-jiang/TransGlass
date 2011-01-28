@@ -30,6 +30,7 @@ public:
     BYTE m_bAlphaStep;
     BYTE m_bAlphaMin;
     BYTE m_bAlphaMax;
+    bool m_bInitShow;
 
 protected:
     virtual void DoDataExchange(CDataExchange* pDX);	// DDX/DDV support
@@ -37,6 +38,7 @@ protected:
 // Implementation
 protected:
     HICON m_hIcon;
+    NOTIFYICONDATA m_notifyIcon;
 
     // Generated message map functions
     virtual BOOL OnInitDialog();
@@ -46,9 +48,12 @@ protected:
     afx_msg void OnPaint();
     afx_msg HCURSOR OnQueryDragIcon();
     afx_msg void OnHotKey(UINT nHotKeyId, UINT nKey1, UINT nKey2);
+    afx_msg LRESULT OnNotifyIcon(WPARAM wParam, LPARAM lParam);
+    afx_msg void OnBnClickedBtnMinToTray();
     DECLARE_MESSAGE_MAP()
 
     bool GetWindowAlpha(CWnd* pHwnd, BYTE* pbAlpha);
     void SetWindowAlpha(CWnd* pHwnd, BYTE bAlpha);
     void UpdateAlphaSteps();
+    void InitNotifyIconData();
 };

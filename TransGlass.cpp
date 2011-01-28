@@ -1,7 +1,6 @@
 
 // TransGlass.cpp : Defines the class behaviors for the application.
 //
-
 #include "stdafx.h"
 #include "TransGlass.h"
 #include "TransGlassDlg.h"
@@ -12,14 +11,12 @@
 
 
 // CTransGlassApp
-
 BEGIN_MESSAGE_MAP(CTransGlassApp, CWinApp)
     ON_COMMAND(ID_HELP, &CWinApp::OnHelp)
 END_MESSAGE_MAP()
 
 
 // CTransGlassApp construction
-
 CTransGlassApp::CTransGlassApp()
 {
     // TODO: add construction code here,
@@ -28,12 +25,10 @@ CTransGlassApp::CTransGlassApp()
 
 
 // The one and only CTransGlassApp object
-
 CTransGlassApp theApp;
 
 
 // CTransGlassApp initialization
-
 BOOL CTransGlassApp::InitInstance()
 {
     // InitCommonControlsEx() is required on Windows XP if an application
@@ -48,7 +43,6 @@ BOOL CTransGlassApp::InitInstance()
 
     CWinApp::InitInstance();
 
-
     // Create the shell manager, in case the dialog contains
     // any shell tree view or shell list view controls.
     CShellManager *pShellManager = new CShellManager;
@@ -62,20 +56,16 @@ BOOL CTransGlassApp::InitInstance()
     CTransGlassDlg dlg;
     m_pMainWnd = &dlg;
     INT_PTR nResponse = dlg.DoModal();
-    if (nResponse == IDOK)
-    {
+    if (nResponse == IDOK) {
         // TODO: Place code here to handle when the dialog is
         //  dismissed with OK
-    }
-    else if (nResponse == IDCANCEL)
-    {
+    } else if (nResponse == IDCANCEL) {
         // TODO: Place code here to handle when the dialog is
         //  dismissed with Cancel
     }
 
     // Delete the shell manager created above.
-    if (pShellManager != NULL)
-    {
+    if (pShellManager != NULL) {
         delete pShellManager;
     }
 

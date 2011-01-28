@@ -25,7 +25,6 @@ public:
     virtual BOOL InitInstance();
 
 // Implementation
-
     DECLARE_MESSAGE_MAP()
 };
 

@@ -273,24 +273,55 @@ void CTransGlassDlg::OnBnClickedBtnTray()
 void CTransGlassDlg::OnBnClickedBtnOpt()
 {
     CTransGlassOptionDlg dlg;
+    BOOL* pOptDlgVal[] = {
+        &dlg.m_bHotKeyEnable,
+        &dlg.m_bHotKeyCtrl,
+        &dlg.m_bHotKeyAlt,
+        &dlg.m_bHotKeyShift,
+        &dlg.m_bHotKeyWin,
+        &dlg.m_bMouseWheelEnable,
+        &dlg.m_bMouseWheelCtrl,
+        &dlg.m_bMouseWheelAlt,
+        &dlg.m_bMouseWheelShift,
+        &dlg.m_bMouseWheelWin,
+        &dlg.m_bStartMinimized,
+        &dlg.m_bAutoStartup
+    };
+    BOOL* pProfileVal[] = {
+        &theApp.m_pProfileHandler->m_bHotKeyEnable,
+        &theApp.m_pProfileHandler->m_bHotKeyCtrl,
+        &theApp.m_pProfileHandler->m_bHotKeyAlt,
+        &theApp.m_pProfileHandler->m_bHotKeyShift,
+        &theApp.m_pProfileHandler->m_bHotKeyWin,
+        &theApp.m_pProfileHandler->m_bMouseWheelEnable,
+        &theApp.m_pProfileHandler->m_bMouseWheelCtrl,
+        &theApp.m_pProfileHandler->m_bMouseWheelAlt,
+        &theApp.m_pProfileHandler->m_bMouseWheelShift,
+        &theApp.m_pProfileHandler->m_bMouseWheelWin,
+        &theApp.m_pProfileHandler->m_bStartMinimized,
+        &theApp.m_pProfileHandler->m_bAutoStartup
+    };
+    ASSERT(sizeof(pOptDlgVal) == sizeof(pProfileVal));
 
     // Set the user profile here.
-    dlg.m_bHotKeyEnable     = theApp.m_pProfileHandler->m_bHotKeyEnable;
-    dlg.m_bHotKeyCtrl       = theApp.m_pProfileHandler->m_bHotKeyCtrl;
-    dlg.m_bHotKeyAlt        = theApp.m_pProfileHandler->m_bHotKeyAlt;
-    dlg.m_bHotKeyShift      = theApp.m_pProfileHandler->m_bHotKeyShift;
-    dlg.m_bHotKeyWin        = theApp.m_pProfileHandler->m_bHotKeyWin;
-    dlg.m_bMouseWheelEnable = theApp.m_pProfileHandler->m_bMouseWheelEnable;
-    dlg.m_bMouseWheelCtrl   = theApp.m_pProfileHandler->m_bMouseWheelCtrl;
-    dlg.m_bMouseWheelAlt    = theApp.m_pProfileHandler->m_bMouseWheelAlt;
-    dlg.m_bMouseWheelShift  = theApp.m_pProfileHandler->m_bMouseWheelShift;
-    dlg.m_bMouseWheelWin    = theApp.m_pProfileHandler->m_bMouseWheelWin;
-    dlg.m_bStartMinimized   = theApp.m_pProfileHandler->m_bStartMinimized;
-    dlg.m_bAutoStartup      = theApp.m_pProfileHandler->m_bAutoStartup;
+    for (int i = 0; i < sizeof(pOptDlgVal) / sizeof(pOptDlgVal[0]); ++i) {
+        *pOptDlgVal[i] = *pProfileVal[i];
+    }
 
     INT_PTR nResponse = dlg.DoModal();
     if (nResponse == IDOK) {
-        // TODO: update the user profile.
+        // Update the user profile here.
+        UpdateData(TRUE);
+        bool bChanged = false;
+        for (int i = 0; i < sizeof(pOptDlgVal) / sizeof(pOptDlgVal[0]); ++i) {
+            if (*pOptDlgVal[i] != *pProfileVal[i]) {
+                *pProfileVal[i] = *pOptDlgVal[i];
+                bChanged = true;
+            }
+        }
+        if (bChanged) {
+            theApp.m_pProfileHandler->WriteProfile();
+        }
     }
 }
 

@@ -55,8 +55,51 @@ void CTransGlassOptionDlg::DoDataExchange(CDataExchange* pDX)
 }
 
 
+BOOL CTransGlassOptionDlg::OnInitDialog()
+{
+    CDialog::OnInitDialog();
+
+    OnBnClickedCheckHotkey();
+    OnBnClickedCheckMousewheel();
+
+    return TRUE;  // return TRUE unless you set the focus to a control
+    // EXCEPTION: OCX Property Pages should return FALSE
+}
+
+
 BEGIN_MESSAGE_MAP(CTransGlassOptionDlg, CDialog)
+    ON_BN_CLICKED(IDC_CHECK_HOTKEY,     &CTransGlassOptionDlg::OnBnClickedCheckHotkey)
+    ON_BN_CLICKED(IDC_CHECK_MOUSEWHEEL, &CTransGlassOptionDlg::OnBnClickedCheckMousewheel)
 END_MESSAGE_MAP()
 
 
 // CTransGlassOptionDlg message handlers
+
+void CTransGlassOptionDlg::OnBnClickedCheckHotkey()
+{
+    static int idGroup[] = {
+        IDC_CHECK_HOTKEY_CTRL,
+        IDC_CHECK_HOTKEY_ALT,
+        IDC_CHECK_HOTKEY_SHIFT,
+        IDC_CHECK_HOTKEY_WIN
+    };
+    BOOL bChecked = ((CButton*) GetDlgItem(IDC_CHECK_HOTKEY))->GetCheck();
+    for (int i = 0; i < sizeof(idGroup) / sizeof(idGroup[0]); ++i) {
+        ((CButton*) GetDlgItem(idGroup[i]))->EnableWindow(bChecked);
+    }
+}
+
+
+void CTransGlassOptionDlg::OnBnClickedCheckMousewheel()
+{
+    static int idGroup[] = {
+        IDC_CHECK_MOUSEWHEEL_CTRL,
+        IDC_CHECK_MOUSEWHEEL_ALT,
+        IDC_CHECK_MOUSEWHEEL_SHIFT,
+        IDC_CHECK_MOUSEWHEEL_WIN
+    };
+    BOOL bChecked = ((CButton*) GetDlgItem(IDC_CHECK_MOUSEWHEEL))->GetCheck();
+    for (int i = 0; i < sizeof(idGroup) / sizeof(idGroup[0]); ++i) {
+        ((CButton*) GetDlgItem(idGroup[i]))->EnableWindow(bChecked);
+    }
+}

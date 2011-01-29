@@ -7,6 +7,7 @@ public:
     ~ProfileHandler();
 
     void ReadProfile();
+    void WriteProfile();
     void GenerateDefaultProfile();
 
     BOOL m_bHotKeyEnable;
@@ -23,6 +24,8 @@ public:
     BOOL m_bAutoStartup;
 
 protected:
+    int GetHotKeyCombination();
+    int GetMouseWheelCombination();
     CString Util_Int2CString(int iVal);
 
     CString m_szProfilePath;

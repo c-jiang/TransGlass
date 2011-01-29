@@ -112,6 +112,37 @@ void ProfileHandler::ReadProfile()
 }
 
 
+void ProfileHandler::WriteProfile()
+{
+    TRACE(">>> %s\n", __FUNCTION__);
+    WritePrivateProfileString(PROFILE_APPNAME,
+                              PROFILE_KEY_HOTKEY_ENABLE,
+                              Util_Int2CString(m_bHotKeyEnable),
+                              m_szProfilePath);
+    WritePrivateProfileString(PROFILE_APPNAME,
+                              PROFILE_KEY_HOTKEY_COMBINATION,
+                              Util_Int2CString(GetHotKeyCombination()),
+                              m_szProfilePath);
+    WritePrivateProfileString(PROFILE_APPNAME,
+                              PROFILE_KEY_MOUSEWHEEL_ENABLE,
+                              Util_Int2CString(m_bMouseWheelEnable),
+                              m_szProfilePath);
+    WritePrivateProfileString(PROFILE_APPNAME,
+                              PROFILE_KEY_MOUSEWHEEL_COMBINATION,
+                              Util_Int2CString(GetMouseWheelCombination()),
+                              m_szProfilePath);
+    WritePrivateProfileString(PROFILE_APPNAME,
+                              PROFILE_KEY_START_MINIMIZED,
+                              Util_Int2CString(m_bStartMinimized),
+                              m_szProfilePath);
+    WritePrivateProfileString(PROFILE_APPNAME,
+                              PROFILE_KEY_AUTO_STARTUP,
+                              Util_Int2CString(m_bAutoStartup),
+                              m_szProfilePath);
+    TRACE("<<< %s\n", __FUNCTION__);
+}
+
+
 void ProfileHandler::GenerateDefaultProfile()
 {
     TRACE(">>> %s\n", __FUNCTION__);
@@ -140,6 +171,26 @@ void ProfileHandler::GenerateDefaultProfile()
                               Util_Int2CString(PROFILE_DEF_AUTO_STARTUP),
                               m_szProfilePath);
     TRACE("<<< %s\n", __FUNCTION__);
+}
+
+
+int ProfileHandler::GetHotKeyCombination()
+{
+    int iVal = (m_bHotKeyCtrl  ? KEY_COMBINATION_CTRL  : 0)
+             | (m_bHotKeyAlt   ? KEY_COMBINATION_ALT   : 0)
+             | (m_bHotKeyShift ? KEY_COMBINATION_SHIFT : 0)
+             | (m_bHotKeyWin   ? KEY_COMBINATION_WIN   : 0);
+    return iVal;
+}
+
+
+int ProfileHandler::GetMouseWheelCombination()
+{
+    int iVal = (m_bMouseWheelCtrl  ? KEY_COMBINATION_CTRL  : 0)
+             | (m_bMouseWheelAlt   ? KEY_COMBINATION_ALT   : 0)
+             | (m_bMouseWheelShift ? KEY_COMBINATION_SHIFT : 0)
+             | (m_bMouseWheelWin   ? KEY_COMBINATION_WIN   : 0);
+    return iVal;
 }
 
 

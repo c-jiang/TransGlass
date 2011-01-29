@@ -273,10 +273,12 @@ void CTransGlassDlg::OnBnClickedBtnTray()
 void CTransGlassDlg::OnBnClickedBtnOpt()
 {
     CTransGlassOptionDlg dlg;
+
+    // TODO: set the user profile here.
+
     INT_PTR nResponse = dlg.DoModal();
     if (nResponse == IDOK) {
-        // TODO: update the profile.
-    } else if (nResponse == IDCANCEL) {
+        // TODO: update the user profile.
     }
 }
 

@@ -33,8 +33,7 @@ public:
     BYTE              m_bAlphaStep;
     BYTE              m_bAlphaMin;
     BYTE              m_bAlphaMax;
-    bool              m_bInitShow;
-    ThreadMouseHook*  m_pMouseHook;
+    ThreadMouseHook*  m_threadMouseHook;
 
 protected:
     virtual void DoDataExchange(CDataExchange* pDX);	// DDX/DDV support
@@ -60,6 +59,8 @@ protected:
     DECLARE_MESSAGE_MAP()
 
 private:
+    void RegisterHotKeys();
+    void UnregisterHotKeys();
     void IncreaseWindowAlpha(CWnd* pHwnd);
     void DecreaseWindowAlpha(CWnd* pHwnd);
     void SetWindowAlpha(CWnd* pHwnd, BYTE bAlpha);

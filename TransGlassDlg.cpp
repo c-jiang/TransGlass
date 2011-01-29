@@ -52,11 +52,10 @@ END_MESSAGE_MAP()
 
 CTransGlassDlg::CTransGlassDlg(CWnd* pParent /*=NULL*/)
     : CDialogEx(CTransGlassDlg::IDD, pParent)
-    , m_pMouseHook(NULL)
+    , m_threadMouseHook(NULL)
 {
     m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
     UpdateAlphaSteps();
-    m_bInitShow = false;
 }
 
 
@@ -108,24 +107,19 @@ BOOL CTransGlassDlg::OnInitDialog()
     SetIcon(m_hIcon, FALSE);		// Set small icon
 
     // Register hot keys.
-    RegisterHotKey(this->GetSafeHwnd(),
-            HOTKEY_ID_WINDOW_ALPHA_INC,
-            MOD_CONTROL,// | MOD_ALT,
-            VK_UP);
-    RegisterHotKey(this->GetSafeHwnd(),
-            HOTKEY_ID_WINDOW_ALPHA_DEC,
-            MOD_CONTROL,// | MOD_ALT,
-            VK_DOWN);
+    if (theApp.m_pProfileHandler->m_bHotKeyEnable) {
+        RegisterHotKeys();
+    }
 
     // Setup the hook here.
-    m_pMouseHook = (ThreadMouseHook*)
+    m_threadMouseHook = (ThreadMouseHook*)
             AfxBeginThread(RUNTIME_CLASS(ThreadMouseHook));
-    m_pMouseHook->EnableHook(m_hWnd);
+    m_threadMouseHook->EnableHook(m_hWnd);
 
     // Create the tray icon in the system tray.
     InitNotifyIconData();
 
-    if (! m_bInitShow) {
+    if (theApp.m_pProfileHandler->m_bStartMinimized) {
         PostMessage(WM_SYSCOMMAND, SC_CLOSE);
     }
 
@@ -136,13 +130,11 @@ BOOL CTransGlassDlg::OnInitDialog()
 BOOL CTransGlassDlg::DestroyWindow()
 {
     // Unregister hot keys here.
-    for (int i = HOTKEY_ID_BEGIN; i < HOTKEY_ID_END; ++i) {
-        UnregisterHotKey(this->GetSafeHwnd(), i);
-    }
+    UnregisterHotKeys();
 
     // Remove the hook here.
-    m_pMouseHook->DisableHook();
-    delete m_pMouseHook;
+    m_threadMouseHook->DisableHook();
+    delete m_threadMouseHook;
 
     // Remove the icon in the system tray.
     Shell_NotifyIcon(NIM_DELETE, &m_notifyIcon);
@@ -321,7 +313,40 @@ void CTransGlassDlg::OnBnClickedBtnOpt()
         }
         if (bChanged) {
             theApp.m_pProfileHandler->WriteProfile();
+            // Update hot key setting.
+            UnregisterHotKeys();
+            if (theApp.m_pProfileHandler->m_bHotKeyEnable) {
+                RegisterHotKeys();
+            }
+            // TODO: Update hook setting.
+            // TODO: Update other settings.
         }
+    }
+}
+
+
+void CTransGlassDlg::RegisterHotKeys()
+{
+    UINT uiMod = (theApp.m_pProfileHandler->m_bHotKeyCtrl  ? MOD_CONTROL : 0)
+               | (theApp.m_pProfileHandler->m_bHotKeyAlt   ? MOD_ALT     : 0)
+               | (theApp.m_pProfileHandler->m_bHotKeyShift ? MOD_SHIFT   : 0)
+               | (theApp.m_pProfileHandler->m_bHotKeyWin   ? MOD_WIN     : 0);
+
+    RegisterHotKey(this->GetSafeHwnd(),
+                   HOTKEY_ID_WINDOW_ALPHA_INC,
+                   uiMod,
+                   VK_UP);
+    RegisterHotKey(this->GetSafeHwnd(),
+                   HOTKEY_ID_WINDOW_ALPHA_DEC,
+                   uiMod,
+                   VK_DOWN);
+}
+
+
+void CTransGlassDlg::UnregisterHotKeys()
+{
+    for (int i = HOTKEY_ID_BEGIN; i < HOTKEY_ID_END; ++i) {
+        UnregisterHotKey(this->GetSafeHwnd(), i);
     }
 }
 

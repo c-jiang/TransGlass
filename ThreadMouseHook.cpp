@@ -15,7 +15,6 @@ static LRESULT CALLBACK LowLevelMouseProc(int nCode, WPARAM wParam, LPARAM lPara
 
 static DWORD      m_dwThreadID = NULL;
 static HHOOK      g_hHook      = NULL;
-static HINSTANCE  g_hInstance  = NULL;
 
 
 // ThreadMouseHook
@@ -100,7 +99,7 @@ bool SetHook(DWORD dwThreadID)
     }
     g_hHook = ::SetWindowsHookEx(WH_MOUSE_LL,
         (HOOKPROC) LowLevelMouseProc, 
-        g_hInstance,
+        AfxGetInstanceHandle(),
         0);
     if (g_hHook) {
         m_dwThreadID = dwThreadID;

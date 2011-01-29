@@ -105,6 +105,7 @@
     <ClInclude Include="ThreadMouseHook.h" />
     <ClInclude Include="TransGlass.h" />
     <ClInclude Include="TransGlassDlg.h" />
+    <ClInclude Include="TransGlassOptionDlg.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -114,6 +115,7 @@
     <ClCompile Include="ThreadMouseHook.cpp" />
     <ClCompile Include="TransGlass.cpp" />
     <ClCompile Include="TransGlassDlg.cpp" />
+    <ClCompile Include="TransGlassOptionDlg.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="TransGlass.rc" />

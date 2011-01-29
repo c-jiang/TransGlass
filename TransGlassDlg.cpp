@@ -5,6 +5,7 @@
 #include "stdafx.h"
 #include "TransGlass.h"
 #include "TransGlassDlg.h"
+#include "TransGlassOptionDlg.h"
 #include "ThreadMouseHook.h"
 #include "afxdialogex.h"
 
@@ -271,6 +272,12 @@ void CTransGlassDlg::OnBnClickedBtnTray()
 
 void CTransGlassDlg::OnBnClickedBtnOpt()
 {
+    CTransGlassOptionDlg dlg;
+    INT_PTR nResponse = dlg.DoModal();
+    if (nResponse == IDOK) {
+        // TODO: update the profile.
+    } else if (nResponse == IDCANCEL) {
+    }
 }
 
 

@@ -9,7 +9,7 @@
 #endif
 
 #include "resource.h"		// main symbols
-
+#include "ProfileHandler.h"
 
 #define APPLICATION_NAME        "Transparent Glass"
 
@@ -18,6 +18,7 @@ class CTransGlassApp : public CWinApp
 {
 public:
     CTransGlassApp();
+    virtual ~CTransGlassApp();
 
 // Overrides
 public:
@@ -25,6 +26,9 @@ public:
 
 // Implementation
     DECLARE_MESSAGE_MAP()
+
+public:
+    ProfileHandler* m_pProfileHandler;
 };
 
 extern CTransGlassApp theApp;

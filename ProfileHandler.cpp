@@ -1,0 +1,151 @@
+#include "stdafx.h"
+#include "ProfileHandler.h"
+
+
+#define PROFILE_APPNAME                     TEXT("TransGlass")
+
+#define PROFILE_KEY_HOTKEY_ENABLE           TEXT("HotKeyEnable")
+#define PROFILE_KEY_HOTKEY_COMBINATION      TEXT("HotKeyCombination")
+#define PROFILE_KEY_MOUSEWHEEL_ENABLE       TEXT("MouseWheelEnable")
+#define PROFILE_KEY_MOUSEWHEEL_COMBINATION  TEXT("MouseWheelCombination")
+#define PROFILE_KEY_START_MINIMIZED         TEXT("Minimized")
+#define PROFILE_KEY_AUTO_STARTUP            TEXT("AutoStartup")
+
+/**
+ * MSB  <Ctrl>   <Alt> <Shift>   <Win>  LSB
+ *          8 ..... 4 ..... 2 ..... 1
+ */
+#define KEY_COMBINATION_CTRL                8
+#define KEY_COMBINATION_ALT                 4
+#define KEY_COMBINATION_SHIFT               2
+#define KEY_COMBINATION_WIN                 1
+
+#define PROFILE_DEF_HOTKEY_ENABLE           1
+#define PROFILE_DEF_HOTKEY_COMBINATION      (KEY_COMBINATION_CTRL |     \
+                                             KEY_COMBINATION_ALT)
+#define PROFILE_DEF_MOUSEWHEEL_ENABLE       1
+#define PROFILE_DEF_MOUSEWHEEL_COMBINATION  (KEY_COMBINATION_CTRL |     \
+                                             KEY_COMBINATION_ALT)
+#define PROFILE_DEF_START_MINIMIZED         1
+#define PROFILE_DEF_AUTO_STARTUP            0
+
+
+ProfileHandler::ProfileHandler(CString& szProfilePath)
+    : m_szProfilePath(szProfilePath)
+    , m_bHotKeyEnable(FALSE)
+    , m_bHotKeyCtrl(FALSE)
+    , m_bHotKeyAlt(FALSE)
+    , m_bHotKeyShift(FALSE)
+    , m_bHotKeyWin(FALSE)
+    , m_bMouseWheelEnable(FALSE)
+    , m_bMouseWheelCtrl(FALSE)
+    , m_bMouseWheelAlt(FALSE)
+    , m_bMouseWheelShift(FALSE)
+    , m_bMouseWheelWin(FALSE)
+    , m_bStartMinimized(FALSE)
+    , m_bAutoStartup(FALSE)
+{
+    TRACE(">>> %s\n", __FUNCTION__);
+    TRACE(TEXT("+++ %s\n"), m_szProfilePath);
+
+    CFileStatus status;
+
+    if (! CFile::GetStatus(m_szProfilePath, status)) {
+        GenerateDefaultProfile();
+    }
+    ReadProfile();
+
+    TRACE("<<< %s\n", __FUNCTION__);
+}
+
+
+ProfileHandler::~ProfileHandler()
+{
+}
+
+
+void ProfileHandler::ReadProfile()
+{
+    int iVal;
+
+    iVal = GetPrivateProfileInt(PROFILE_APPNAME,
+                                PROFILE_KEY_HOTKEY_ENABLE,
+                                PROFILE_DEF_HOTKEY_ENABLE,
+                                m_szProfilePath);
+    m_bHotKeyEnable = (BOOL) iVal;
+
+    iVal = GetPrivateProfileInt(PROFILE_APPNAME,
+                                PROFILE_KEY_HOTKEY_COMBINATION,
+                                PROFILE_DEF_HOTKEY_COMBINATION,
+                                m_szProfilePath);
+    m_bHotKeyCtrl  = ((iVal & KEY_COMBINATION_CTRL)  != 0);
+    m_bHotKeyAlt   = ((iVal & KEY_COMBINATION_ALT)   != 0);
+    m_bHotKeyShift = ((iVal & KEY_COMBINATION_SHIFT) != 0);
+    m_bHotKeyWin   = ((iVal & KEY_COMBINATION_WIN)   != 0);
+
+    iVal = GetPrivateProfileInt(PROFILE_APPNAME,
+                                PROFILE_KEY_MOUSEWHEEL_ENABLE,
+                                PROFILE_DEF_MOUSEWHEEL_ENABLE,
+                                m_szProfilePath);
+    m_bMouseWheelEnable = (BOOL) iVal;
+
+    iVal = GetPrivateProfileInt(PROFILE_APPNAME,
+                                PROFILE_KEY_MOUSEWHEEL_COMBINATION,
+                                PROFILE_DEF_MOUSEWHEEL_COMBINATION,
+                                m_szProfilePath);
+    m_bMouseWheelCtrl  = ((iVal & KEY_COMBINATION_CTRL)  != 0);
+    m_bMouseWheelAlt   = ((iVal & KEY_COMBINATION_ALT)   != 0);
+    m_bMouseWheelShift = ((iVal & KEY_COMBINATION_SHIFT) != 0);
+    m_bMouseWheelWin   = ((iVal & KEY_COMBINATION_WIN)   != 0);
+
+    iVal = GetPrivateProfileInt(PROFILE_APPNAME,
+                                PROFILE_KEY_START_MINIMIZED,
+                                PROFILE_DEF_START_MINIMIZED,
+                                m_szProfilePath);
+    m_bStartMinimized = (BOOL) iVal;
+
+    iVal = GetPrivateProfileInt(PROFILE_APPNAME,
+                                PROFILE_KEY_AUTO_STARTUP,
+                                PROFILE_DEF_AUTO_STARTUP,
+                                m_szProfilePath);
+    m_bAutoStartup = (BOOL) iVal;
+}
+
+
+void ProfileHandler::GenerateDefaultProfile()
+{
+    TRACE(">>> %s\n", __FUNCTION__);
+    WritePrivateProfileString(PROFILE_APPNAME,
+                              PROFILE_KEY_HOTKEY_ENABLE,
+                              Util_Int2CString(PROFILE_DEF_HOTKEY_ENABLE),
+                              m_szProfilePath);
+    WritePrivateProfileString(PROFILE_APPNAME,
+                              PROFILE_KEY_HOTKEY_COMBINATION,
+                              Util_Int2CString(PROFILE_DEF_HOTKEY_COMBINATION),
+                              m_szProfilePath);
+    WritePrivateProfileString(PROFILE_APPNAME,
+                              PROFILE_KEY_MOUSEWHEEL_ENABLE,
+                              Util_Int2CString(PROFILE_DEF_MOUSEWHEEL_ENABLE),
+                              m_szProfilePath);
+    WritePrivateProfileString(PROFILE_APPNAME,
+                              PROFILE_KEY_MOUSEWHEEL_COMBINATION,
+                              Util_Int2CString(PROFILE_DEF_MOUSEWHEEL_COMBINATION),
+                              m_szProfilePath);
+    WritePrivateProfileString(PROFILE_APPNAME,
+                              PROFILE_KEY_START_MINIMIZED,
+                              Util_Int2CString(PROFILE_DEF_START_MINIMIZED),
+                              m_szProfilePath);
+    WritePrivateProfileString(PROFILE_APPNAME,
+                              PROFILE_KEY_AUTO_STARTUP,
+                              Util_Int2CString(PROFILE_DEF_AUTO_STARTUP),
+                              m_szProfilePath);
+    TRACE("<<< %s\n", __FUNCTION__);
+}
+
+
+CString ProfileHandler::Util_Int2CString(int iVal)
+{
+    CString szOut;
+    szOut.Format(TEXT("%d"), iVal);
+    return szOut;
+}

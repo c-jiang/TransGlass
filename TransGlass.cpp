@@ -4,6 +4,7 @@
 #include "stdafx.h"
 #include "TransGlass.h"
 #include "TransGlassDlg.h"
+#include "ProfileHandler.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -18,9 +19,21 @@ END_MESSAGE_MAP()
 
 // CTransGlassApp construction
 CTransGlassApp::CTransGlassApp()
+    : m_pProfileHandler(NULL)
 {
-    // TODO: add construction code here,
-    // Place all significant initialization in InitInstance
+    CString szPath;
+    AfxGetModuleFileName(NULL, szPath);
+    szPath = szPath.Mid(0, szPath.GetLength() - 3) + TEXT("ini");
+
+    m_pProfileHandler = new ProfileHandler(szPath);
+}
+
+
+CTransGlassApp::~CTransGlassApp()
+{
+    if (m_pProfileHandler) {
+        delete m_pProfileHandler;
+    }
 }
 
 

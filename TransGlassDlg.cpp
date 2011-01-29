@@ -274,7 +274,19 @@ void CTransGlassDlg::OnBnClickedBtnOpt()
 {
     CTransGlassOptionDlg dlg;
 
-    // TODO: set the user profile here.
+    // Set the user profile here.
+    dlg.m_bHotKeyEnable     = theApp.m_pProfileHandler->m_bHotKeyEnable;
+    dlg.m_bHotKeyCtrl       = theApp.m_pProfileHandler->m_bHotKeyCtrl;
+    dlg.m_bHotKeyAlt        = theApp.m_pProfileHandler->m_bHotKeyAlt;
+    dlg.m_bHotKeyShift      = theApp.m_pProfileHandler->m_bHotKeyShift;
+    dlg.m_bHotKeyWin        = theApp.m_pProfileHandler->m_bHotKeyWin;
+    dlg.m_bMouseWheelEnable = theApp.m_pProfileHandler->m_bMouseWheelEnable;
+    dlg.m_bMouseWheelCtrl   = theApp.m_pProfileHandler->m_bMouseWheelCtrl;
+    dlg.m_bMouseWheelAlt    = theApp.m_pProfileHandler->m_bMouseWheelAlt;
+    dlg.m_bMouseWheelShift  = theApp.m_pProfileHandler->m_bMouseWheelShift;
+    dlg.m_bMouseWheelWin    = theApp.m_pProfileHandler->m_bMouseWheelWin;
+    dlg.m_bStartMinimized   = theApp.m_pProfileHandler->m_bStartMinimized;
+    dlg.m_bAutoStartup      = theApp.m_pProfileHandler->m_bAutoStartup;
 
     INT_PTR nResponse = dlg.DoModal();
     if (nResponse == IDOK) {

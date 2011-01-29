@@ -5,6 +5,10 @@
 #pragma once
 
 
+// Declaration
+class ThreadMouseHook;
+
+
 // CTransGlassDlg dialog
 class CTransGlassDlg : public CDialogEx
 {
@@ -27,10 +31,11 @@ public:
     static const BYTE c_bAlphaDefMax  = 255;
     static const BYTE c_bAlphaDefStep = 10;
 
-    BYTE m_bAlphaStep;
-    BYTE m_bAlphaMin;
-    BYTE m_bAlphaMax;
-    bool m_bInitShow;
+    BYTE              m_bAlphaStep;
+    BYTE              m_bAlphaMin;
+    BYTE              m_bAlphaMax;
+    bool              m_bInitShow;
+    ThreadMouseHook*  m_pMouseHook;
 
 protected:
     virtual void DoDataExchange(CDataExchange* pDX);	// DDX/DDV support
@@ -50,6 +55,7 @@ protected:
     afx_msg HCURSOR OnQueryDragIcon();
     afx_msg void OnHotKey(UINT nHotKeyId, UINT nKey1, UINT nKey2);
     afx_msg LRESULT OnNotifyIcon(WPARAM wParam, LPARAM lParam);
+    afx_msg BOOL OnMouseWheel(UINT nFlags, short zDelta, CPoint pt);
     afx_msg void OnBnClickedBtnTray();
     afx_msg void OnBnClickedBtnOpt();
     DECLARE_MESSAGE_MAP()

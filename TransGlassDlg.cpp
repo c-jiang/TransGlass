@@ -5,6 +5,7 @@
 #include "stdafx.h"
 #include "TransGlass.h"
 #include "TransGlassDlg.h"
+#include "ThreadMouseHook.h"
 #include "afxdialogex.h"
 
 #ifdef _DEBUG
@@ -50,22 +51,26 @@ END_MESSAGE_MAP()
 
 CTransGlassDlg::CTransGlassDlg(CWnd* pParent /*=NULL*/)
     : CDialogEx(CTransGlassDlg::IDD, pParent)
+    , m_pMouseHook(NULL)
 {
     m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
     UpdateAlphaSteps();
     m_bInitShow = false;
 }
 
+
 void CTransGlassDlg::DoDataExchange(CDataExchange* pDX)
 {
     CDialogEx::DoDataExchange(pDX);
 }
+
 
 BEGIN_MESSAGE_MAP(CTransGlassDlg, CDialogEx)
     ON_WM_SYSCOMMAND()
     ON_WM_PAINT()
     ON_WM_QUERYDRAGICON()
     ON_WM_HOTKEY()
+    ON_WM_MOUSEWHEEL()
     ON_MESSAGE(WM_NOTIFYICON, OnNotifyIcon)
     ON_BN_CLICKED(IDC_BTN_TRAY, &CTransGlassDlg::OnBnClickedBtnTray)
     ON_BN_CLICKED(IDC_BTN_OPT, &CTransGlassDlg::OnBnClickedBtnOpt)
@@ -111,6 +116,11 @@ BOOL CTransGlassDlg::OnInitDialog()
             MOD_CONTROL,// | MOD_ALT,
             VK_DOWN);
 
+    // Setup the hook here.
+    m_pMouseHook = (ThreadMouseHook*)
+            AfxBeginThread(RUNTIME_CLASS(ThreadMouseHook));
+    m_pMouseHook->EnableHook(m_hWnd);
+
     // Create the tray icon in the system tray.
     InitNotifyIconData();
 
@@ -128,6 +138,10 @@ BOOL CTransGlassDlg::DestroyWindow()
     for (int i = HOTKEY_ID_01; i < HOTKEY_ID_MAX; ++i) {
         UnregisterHotKey(this->GetSafeHwnd(), i);
     }
+
+    // Remove the hook here.
+    m_pMouseHook->DisableHook();
+    delete m_pMouseHook;
 
     // Remove the icon in the system tray.
     Shell_NotifyIcon(NIM_DELETE, &m_notifyIcon);
@@ -243,6 +257,51 @@ LRESULT CTransGlassDlg::OnNotifyIcon(WPARAM wParam, LPARAM lParam)
 }
 
 
+BOOL CTransGlassDlg::OnMouseWheel(UINT nFlags, short zDelta, CPoint pt)
+{
+    TRACE("+++ %s(%u, %u, %u, %u)\n",
+          __FUNCTION__, nFlags, zDelta, pt.x, pt.y);
+
+    int iScrollValue = (zDelta / 120) * m_bAlphaStep;
+    TRACE("+++ iScrollValue=%d\n", iScrollValue);
+
+    CWnd* pWnd    = WindowFromPoint(pt);
+    CWnd* pWndApp = NULL;
+    BYTE  bAlpha  = 0xFF;
+
+    // TODO: Test with QQ, StickNote, etc.
+    if (pWnd) {
+        while (TRUE) {
+            pWnd->GetParent();
+            pWndApp = pWnd->GetParent();
+            if (pWndApp) {
+                pWnd = pWndApp;
+            } else {
+                break;
+            }
+        }
+        pWndApp = pWnd;
+
+        GetWindowAlpha(pWndApp, &bAlpha);
+        if (iScrollValue > 0) {
+            if (bAlpha < m_bAlphaMax - m_bAlphaStep) {
+                SetWindowAlpha(pWndApp, bAlpha + m_bAlphaStep);
+            } else {
+                SetWindowAlpha(pWndApp, m_bAlphaMax);
+            }
+        } else if (iScrollValue < 0) {
+            if (bAlpha >= m_bAlphaMin + m_bAlphaStep) {
+                SetWindowAlpha(pWndApp, bAlpha - m_bAlphaStep);
+            } else {
+                SetWindowAlpha(pWndApp, m_bAlphaMin);
+            }
+        }
+    }
+
+    return CDialog::OnMouseWheel(nFlags, zDelta, pt);
+}
+
+
 void CTransGlassDlg::OnBnClickedBtnTray()
 {
     MinimizeToTray();
@@ -262,7 +321,7 @@ bool CTransGlassDlg::GetWindowAlpha(CWnd* pHwnd, BYTE* pbAlpha)
         bRetVal = false;
     } else {
         pHwnd->GetLayeredWindowAttributes(NULL, pbAlpha, NULL);
-        TRACE("=== %s Alpha=%d\n", __FUNCTION__, *pbAlpha);
+        TRACE("+++ %s Alpha=%d\n", __FUNCTION__, *pbAlpha);
     }
     return bRetVal;
 }

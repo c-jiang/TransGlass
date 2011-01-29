@@ -27,6 +27,10 @@ ThreadMouseHook::~ThreadMouseHook()
 
 DWORD ThreadMouseHook::s_dwThreadID(NULL);
 HHOOK ThreadMouseHook::s_hHook(NULL);
+BOOL  ThreadMouseHook::s_bKeyCtrl(FALSE);
+BOOL  ThreadMouseHook::s_bKeyAlt(FALSE);
+BOOL  ThreadMouseHook::s_bKeyShift(FALSE);
+BOOL  ThreadMouseHook::s_bKeyWin(FALSE);
 
 
 BOOL ThreadMouseHook::EnableHook(HWND hWnd)
@@ -59,6 +63,30 @@ BOOL ThreadMouseHook::DisableHook()
         s_hHook      = NULL;
         bRet = TRUE;
     }
+    return bRet;
+}
+
+
+void ThreadMouseHook::SetKeyCombination(BOOL bCtrl,
+                                        BOOL bAlt,
+                                        BOOL bShift,
+                                        BOOL bWin)
+{
+    s_bKeyCtrl  = bCtrl;
+    s_bKeyAlt   = bAlt;
+    s_bKeyShift = bShift;
+    s_bKeyWin   = bWin;
+}
+
+
+BOOL ThreadMouseHook::CheckKeyCombination()
+{
+    BOOL bRet = (s_bKeyCtrl  ? (0x8000 & GetKeyState(VK_CONTROL)) : TRUE)
+             && (s_bKeyAlt   ? (0x8000 & GetKeyState(VK_MENU))    : TRUE)
+             && (s_bKeyShift ? (0x8000 & GetKeyState(VK_SHIFT))   : TRUE)
+             && (s_bKeyWin
+                 ? (0x8000 & (GetKeyState(VK_LWIN) | GetKeyState(VK_RWIN)))
+                 : TRUE);
     return bRet;
 }
 
@@ -96,9 +124,7 @@ LRESULT CALLBACK ThreadMouseHook::LowLevelMouseProc(int nCode, WPARAM wParam, LP
     }
 
     if (WM_MOUSEWHEEL == wParam) {
-        if ((0x8000 & ::GetKeyState(VK_CONTROL)) &&
-            (0x8000 & ::GetKeyState(VK_MENU)))
-        {
+        if (CheckKeyCombination()) {
             PMSLLHOOKSTRUCT pstLLHook = (PMSLLHOOKSTRUCT) lParam;
             ::PostThreadMessage(s_dwThreadID,
                                 WM_MOUSEWHEEL_HOOKMSG,

@@ -114,7 +114,14 @@ BOOL CTransGlassDlg::OnInitDialog()
     // Setup the hook here.
     m_threadMouseHook = (ThreadMouseHook*)
             AfxBeginThread(RUNTIME_CLASS(ThreadMouseHook));
-    m_threadMouseHook->EnableHook(m_hWnd);
+    if (theApp.m_pProfileHandler->m_bMouseWheelEnable) {
+        m_threadMouseHook->SetKeyCombination(
+                theApp.m_pProfileHandler->m_bMouseWheelCtrl,
+                theApp.m_pProfileHandler->m_bMouseWheelAlt,
+                theApp.m_pProfileHandler->m_bMouseWheelShift,
+                theApp.m_pProfileHandler->m_bMouseWheelWin);
+        m_threadMouseHook->EnableHook(m_hWnd);
+    }
 
     // Create the tray icon in the system tray.
     InitNotifyIconData();
@@ -318,7 +325,16 @@ void CTransGlassDlg::OnBnClickedBtnOpt()
             if (theApp.m_pProfileHandler->m_bHotKeyEnable) {
                 RegisterHotKeys();
             }
-            // TODO: Update hook setting.
+            // Update hook setting.
+            m_threadMouseHook->DisableHook();
+            if (theApp.m_pProfileHandler->m_bMouseWheelEnable) {
+                m_threadMouseHook->SetKeyCombination(
+                        theApp.m_pProfileHandler->m_bMouseWheelCtrl,
+                        theApp.m_pProfileHandler->m_bMouseWheelAlt,
+                        theApp.m_pProfileHandler->m_bMouseWheelShift,
+                        theApp.m_pProfileHandler->m_bMouseWheelWin);
+                m_threadMouseHook->EnableHook(m_hWnd);
+            }
             // TODO: Update other settings.
         }
     }

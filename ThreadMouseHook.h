@@ -12,8 +12,10 @@ public:
     ThreadMouseHook();           // protected constructor used by dynamic creation
     virtual ~ThreadMouseHook();
 
-    BOOL    EnableHook(HWND hWnd);
-    BOOL    DisableHook();
+    BOOL EnableHook(HWND hWnd);
+    BOOL DisableHook();
+
+    static void SetKeyCombination(BOOL bCtrl, BOOL bAlt, BOOL bShift, BOOL bWin);
 
     virtual BOOL InitInstance();
     virtual int  ExitInstance();
@@ -24,8 +26,14 @@ protected:
 
 private:
     static LRESULT CALLBACK LowLevelMouseProc(int nCode, WPARAM wParam, LPARAM lParam);
+    static inline BOOL CheckKeyCombination();
 
-    HWND            m_hWnd;
     static DWORD    s_dwThreadID;
     static HHOOK    s_hHook;
+    static BOOL     s_bKeyCtrl;
+    static BOOL     s_bKeyAlt;
+    static BOOL     s_bKeyShift;
+    static BOOL     s_bKeyWin;
+
+    HWND            m_hWnd;
 };

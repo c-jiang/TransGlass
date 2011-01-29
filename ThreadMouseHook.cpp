@@ -9,22 +9,13 @@
 #define WM_MOUSEWHEEL_HOOKMSG   (WM_APP + 101)
 
 
-static bool SetHook(DWORD dwThreadID);
-static bool UnsetHook();
-static LRESULT CALLBACK LowLevelMouseProc(int nCode, WPARAM wParam, LPARAM lParam);
-
-static DWORD      m_dwThreadID = NULL;
-static HHOOK      g_hHook      = NULL;
-
-
 // ThreadMouseHook
 
 IMPLEMENT_DYNCREATE(ThreadMouseHook, CWinThread)
 
+
 ThreadMouseHook::ThreadMouseHook()
     : m_hWnd(NULL)
-    , m_fpSetHook(NULL)
-    , m_fpUnsetHook(NULL)
 {
 }
 
@@ -34,27 +25,41 @@ ThreadMouseHook::~ThreadMouseHook()
 }
 
 
+DWORD ThreadMouseHook::s_dwThreadID(NULL);
+HHOOK ThreadMouseHook::s_hHook(NULL);
+
+
 BOOL ThreadMouseHook::EnableHook(HWND hWnd)
 {
-    m_hWnd = hWnd;
-    m_fpSetHook = SetHook;
-    m_fpUnsetHook = UnsetHook;
+    BOOL bRet = TRUE;
 
-    if (! m_fpSetHook(this->m_nThreadID)) {
-        return FALSE;
-    } else {
-        return TRUE;
+    m_hWnd = hWnd;
+    if (! s_dwThreadID) {
+        s_hHook = ::SetWindowsHookEx(WH_MOUSE_LL,
+                                     (HOOKPROC) LowLevelMouseProc, 
+                                     AfxGetInstanceHandle(),
+                                     0);
+        if (s_hHook) {
+            s_dwThreadID = this->m_nThreadID;
+        } else {
+            bRet = FALSE;
+        }
     }
+    return bRet;
 }
 
 
 BOOL ThreadMouseHook::DisableHook()
 {
-    if (! m_fpUnsetHook()) {
-        return FALSE;
-    } else {
-        return TRUE;
+    BOOL bRet = FALSE;
+
+    if (s_dwThreadID && s_hHook) {
+        ::UnhookWindowsHookEx(s_hHook);
+        s_dwThreadID = NULL;
+        s_hHook      = NULL;
+        bRet = TRUE;
     }
+    return bRet;
 }
 
 
@@ -83,51 +88,10 @@ BOOL ThreadMouseHook::PreTranslateMessage(MSG* pMsg)
 }
 
 
-BEGIN_MESSAGE_MAP(ThreadMouseHook, CWinThread)
-END_MESSAGE_MAP()
-
-
-// ThreadMouseHook message handlers
-
-
-
-
-bool SetHook(DWORD dwThreadID)
-{
-    if (m_dwThreadID) {
-        return true;
-    }
-    g_hHook = ::SetWindowsHookEx(WH_MOUSE_LL,
-        (HOOKPROC) LowLevelMouseProc, 
-        AfxGetInstanceHandle(),
-        0);
-    if (g_hHook) {
-        m_dwThreadID = dwThreadID;
-        return true;
-    }
-    return false;
-}
-
-
-bool UnsetHook()
-{
-    if (! m_dwThreadID) {
-        return false;
-    }
-    if (g_hHook) {
-        ::UnhookWindowsHookEx(g_hHook);
-        m_dwThreadID = NULL;
-        g_hHook = NULL;
-        return true;
-    }
-    return false;
-}
-
-
-LRESULT CALLBACK LowLevelMouseProc(int nCode, WPARAM wParam, LPARAM lParam)
+LRESULT CALLBACK ThreadMouseHook::LowLevelMouseProc(int nCode, WPARAM wParam, LPARAM lParam)
 { 
-    if ((0 > nCode) && g_hHook) {
-        ::CallNextHookEx(g_hHook, nCode, wParam, lParam);
+    if ((0 > nCode) && s_hHook) {
+        ::CallNextHookEx(s_hHook, nCode, wParam, lParam);
         return 0;
     }
 
@@ -136,7 +100,7 @@ LRESULT CALLBACK LowLevelMouseProc(int nCode, WPARAM wParam, LPARAM lParam)
             (0x8000 & ::GetKeyState(VK_MENU)))
         {
             PMSLLHOOKSTRUCT pstLLHook = (PMSLLHOOKSTRUCT) lParam;
-            ::PostThreadMessage(m_dwThreadID,
+            ::PostThreadMessage(s_dwThreadID,
                                 WM_MOUSEWHEEL_HOOKMSG,
                                 pstLLHook->mouseData,
                                 MAKELPARAM(pstLLHook->pt.x, pstLLHook->pt.y));
@@ -144,5 +108,9 @@ LRESULT CALLBACK LowLevelMouseProc(int nCode, WPARAM wParam, LPARAM lParam)
         }
     }
 
-    return ::CallNextHookEx(g_hHook, nCode, wParam, lParam);
+    return ::CallNextHookEx(s_hHook, nCode, wParam, lParam);
 } 
+
+
+BEGIN_MESSAGE_MAP(ThreadMouseHook, CWinThread)
+END_MESSAGE_MAP()

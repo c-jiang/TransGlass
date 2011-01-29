@@ -4,10 +4,6 @@
 
 // ThreadMouseHook
 
-typedef bool (*SetHook_fp)(DWORD ulThreadID);
-typedef bool (*UnsetHook_fp)();
-
-
 class ThreadMouseHook : public CWinThread
 {
     DECLARE_DYNCREATE(ThreadMouseHook)
@@ -27,7 +23,9 @@ protected:
     DECLARE_MESSAGE_MAP()
 
 private:
-    SetHook_fp      m_fpSetHook;
-    UnsetHook_fp    m_fpUnsetHook;
+    static LRESULT CALLBACK LowLevelMouseProc(int nCode, WPARAM wParam, LPARAM lParam);
+
     HWND            m_hWnd;
+    static DWORD    s_dwThreadID;
+    static HHOOK    s_hHook;
 };

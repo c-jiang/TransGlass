@@ -41,6 +41,15 @@ BOOL CTransGlassApp::InitInstance()
     InitCtrls.dwICC = ICC_WIN95_CLASSES;
     InitCommonControlsEx(&InitCtrls);
 
+    CreateMutex(NULL, TRUE, TEXT(APPLICATION_NAME));
+    if (GetLastError() == ERROR_ALREADY_EXISTS) {
+        MessageBox(NULL,
+                   TEXT("TransGlass is already running."),
+                   TEXT(APPLICATION_NAME),
+                   MB_OK | MB_ICONERROR);
+        return FALSE;
+    }
+
     CWinApp::InitInstance();
 
 #if 0
@@ -57,14 +66,14 @@ BOOL CTransGlassApp::InitInstance()
 
     CTransGlassDlg dlg;
     m_pMainWnd = &dlg;
+#if 0
     INT_PTR nResponse = dlg.DoModal();
     if (nResponse == IDOK) {
-        // TODO: Place code here to handle when the dialog is
-        //  dismissed with OK
     } else if (nResponse == IDCANCEL) {
-        // TODO: Place code here to handle when the dialog is
-        //  dismissed with Cancel
     }
+#else
+    dlg.DoModal();
+#endif
 
 #if 0
     // Delete the shell manager created above.

@@ -61,6 +61,7 @@ protected:
 private:
     void RegisterHotKeys();
     void UnregisterHotKeys();
+    void UpdateSystemReg();
     void IncreaseWindowAlpha(CWnd* pHwnd);
     void DecreaseWindowAlpha(CWnd* pHwnd);
     void SetWindowAlpha(CWnd* pHwnd, BYTE bAlpha);

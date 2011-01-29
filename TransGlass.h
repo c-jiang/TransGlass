@@ -11,7 +11,10 @@
 #include "resource.h"		// main symbols
 #include "ProfileHandler.h"
 
-#define APPLICATION_NAME        "Transparent Glass"
+
+#define APPLICATION_NAME            TEXT("Transparent Glass")
+#define APPLICATION_REG_NAME        TEXT("TransGlass")
+#define APPLICATION_REG_PATH        TEXT("Software\\Microsoft\\Windows\\CurrentVersion\\Run")
 
 
 class CTransGlassApp : public CWinApp
@@ -29,6 +32,7 @@ public:
 
 public:
     ProfileHandler* m_pProfileHandler;
+    CString         m_szAppPath;
 };
 
 extern CTransGlassApp theApp;

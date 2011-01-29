@@ -111,7 +111,7 @@ BOOL CTransGlassDlg::OnInitDialog()
         RegisterHotKeys();
     }
 
-    // Setup the hook here.
+    // Setup the hook.
     m_threadMouseHook = (ThreadMouseHook*)
             AfxBeginThread(RUNTIME_CLASS(ThreadMouseHook));
     if (theApp.m_pProfileHandler->m_bMouseWheelEnable) {
@@ -122,6 +122,9 @@ BOOL CTransGlassDlg::OnInitDialog()
                 theApp.m_pProfileHandler->m_bMouseWheelWin);
         m_threadMouseHook->EnableHook(m_hWnd);
     }
+
+    // Update system reg.
+    UpdateSystemReg();
 
     // Create the tray icon in the system tray.
     InitNotifyIconData();
@@ -335,7 +338,8 @@ void CTransGlassDlg::OnBnClickedBtnOpt()
                         theApp.m_pProfileHandler->m_bMouseWheelWin);
                 m_threadMouseHook->EnableHook(m_hWnd);
             }
-            // TODO: Update other settings.
+            // Update auto startup setting.
+            UpdateSystemReg();
         }
     }
 }
@@ -363,6 +367,28 @@ void CTransGlassDlg::UnregisterHotKeys()
 {
     for (int i = HOTKEY_ID_BEGIN; i < HOTKEY_ID_END; ++i) {
         UnregisterHotKey(this->GetSafeHwnd(), i);
+    }
+}
+
+
+void CTransGlassDlg::UpdateSystemReg()
+{
+    HKEY hKey;
+    if (ERROR_SUCCESS == RegOpenKey(HKEY_CURRENT_USER,
+                                    APPLICATION_REG_PATH,
+                                    &hKey)) {
+        if (theApp.m_pProfileHandler->m_bAutoStartup) {
+            CString szStr("Hello,world!");
+            RegSetValueEx(hKey,
+                          APPLICATION_REG_NAME,
+                          0,
+                          REG_SZ,
+                          (const BYTE*) theApp.m_szAppPath.GetBuffer(),
+                          (theApp.m_szAppPath.GetLength() + 1) * sizeof(TCHAR));
+        } else {
+            RegDeleteValue(hKey, APPLICATION_REG_NAME);
+        }
+        RegCloseKey(hKey);
     }
 }
 
@@ -434,7 +460,7 @@ void CTransGlassDlg::InitNotifyIconData()
     m_notifyIcon.uCallbackMessage = WM_NOTIFYICON;
     m_notifyIcon.hIcon  = LoadIcon(AfxGetInstanceHandle(),
                                    MAKEINTRESOURCE(IDR_MAINFRAME));
-    _tcscpy_s(m_notifyIcon.szTip, TEXT(APPLICATION_NAME));
+    _tcscpy_s(m_notifyIcon.szTip, APPLICATION_NAME);
 }
 
 

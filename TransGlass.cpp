@@ -23,6 +23,7 @@ CTransGlassApp::CTransGlassApp()
 {
     CString szPath;
     AfxGetModuleFileName(NULL, szPath);
+    m_szAppPath = szPath;
     szPath = szPath.Mid(0, szPath.GetLength() - 3) + TEXT("ini");
 
     m_pProfileHandler = new ProfileHandler(szPath);
@@ -54,11 +55,11 @@ BOOL CTransGlassApp::InitInstance()
     InitCtrls.dwICC = ICC_WIN95_CLASSES;
     InitCommonControlsEx(&InitCtrls);
 
-    CreateMutex(NULL, TRUE, TEXT(APPLICATION_NAME));
+    CreateMutex(NULL, TRUE, APPLICATION_NAME);
     if (GetLastError() == ERROR_ALREADY_EXISTS) {
         MessageBox(NULL,
                    TEXT("TransGlass is already running."),
-                   TEXT(APPLICATION_NAME),
+                   APPLICATION_NAME,
                    MB_OK | MB_ICONERROR);
         return FALSE;
     }

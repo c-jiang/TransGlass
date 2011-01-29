@@ -20,11 +20,10 @@ public:
     enum { IDD = IDD_TRANSGLASS_DIALOG };
 
     enum eHotKeyId {
-        HOTKEY_ID_01 = 0,
-        HOTKEY_ID_02,
-        HOTKEY_ID_03,
-        HOTKEY_ID_04,
-        HOTKEY_ID_MAX
+        HOTKEY_ID_BEGIN             = 0,
+        HOTKEY_ID_WINDOW_ALPHA_INC  = 0,
+        HOTKEY_ID_WINDOW_ALPHA_DEC,
+        HOTKEY_ID_END
     };
 
     static const BYTE c_bAlphaDefMin  = 10;
@@ -61,9 +60,12 @@ protected:
     DECLARE_MESSAGE_MAP()
 
 private:
-    bool GetWindowAlpha(CWnd* pHwnd, BYTE* pbAlpha);
+    void IncreaseWindowAlpha(CWnd* pHwnd);
+    void DecreaseWindowAlpha(CWnd* pHwnd);
     void SetWindowAlpha(CWnd* pHwnd, BYTE bAlpha);
     void UpdateAlphaSteps();
     void InitNotifyIconData();
     void MinimizeToTray();
+    CWnd* GetWindowForeground();
+    CWnd* GetWindowUnderMouseCursor(LPPOINT lpPt);
 };

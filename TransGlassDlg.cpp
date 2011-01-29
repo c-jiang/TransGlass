@@ -108,11 +108,11 @@ BOOL CTransGlassDlg::OnInitDialog()
 
     // Register hot keys.
     RegisterHotKey(this->GetSafeHwnd(),
-            HOTKEY_ID_01,
+            HOTKEY_ID_WINDOW_ALPHA_INC,
             MOD_CONTROL,// | MOD_ALT,
             VK_UP);
     RegisterHotKey(this->GetSafeHwnd(),
-            HOTKEY_ID_02,
+            HOTKEY_ID_WINDOW_ALPHA_DEC,
             MOD_CONTROL,// | MOD_ALT,
             VK_DOWN);
 
@@ -135,7 +135,7 @@ BOOL CTransGlassDlg::OnInitDialog()
 BOOL CTransGlassDlg::DestroyWindow()
 {
     // Unregister hot keys here.
-    for (int i = HOTKEY_ID_01; i < HOTKEY_ID_MAX; ++i) {
+    for (int i = HOTKEY_ID_BEGIN; i < HOTKEY_ID_END; ++i) {
         UnregisterHotKey(this->GetSafeHwnd(), i);
     }
 
@@ -207,31 +207,16 @@ void CTransGlassDlg::OnHotKey(UINT nHotKeyId, UINT nKey1, UINT nKey2)
 {
     TRACE(">>> %s(%u, %u, %u)\n", __FUNCTION__, nHotKeyId, nKey1, nKey2);
 
-    CWnd *pHwnd = NULL;
-    BYTE bAlpha = 0xFF;
+    CWnd* pHwnd  = NULL;
 
     switch (nHotKeyId) {
-    case HOTKEY_ID_01:
-        pHwnd = GetDesktopWindow()->GetForegroundWindow();
-        if (pHwnd) {
-            GetWindowAlpha(pHwnd, &bAlpha);
-            if (bAlpha < m_bAlphaMax - m_bAlphaStep) {
-                SetWindowAlpha(pHwnd, bAlpha + m_bAlphaStep);
-            } else {
-                SetWindowAlpha(pHwnd, m_bAlphaMax);
-            }
-        }
+    case HOTKEY_ID_WINDOW_ALPHA_INC:
+        pHwnd = GetWindowForeground();
+        IncreaseWindowAlpha(pHwnd);
         break;
-    case HOTKEY_ID_02:
-        pHwnd = GetDesktopWindow()->GetForegroundWindow();
-        if (pHwnd) {
-            GetWindowAlpha(pHwnd, &bAlpha);
-            if (bAlpha >= m_bAlphaMin + m_bAlphaStep) {
-                SetWindowAlpha(pHwnd, bAlpha - m_bAlphaStep);
-            } else {
-                SetWindowAlpha(pHwnd, m_bAlphaMin);
-            }
-        }
+    case HOTKEY_ID_WINDOW_ALPHA_DEC:
+        pHwnd = GetWindowForeground();
+        DecreaseWindowAlpha(pHwnd);
         break;
     default:
         break;
@@ -265,36 +250,12 @@ BOOL CTransGlassDlg::OnMouseWheel(UINT nFlags, short zDelta, CPoint pt)
     int iScrollValue = (zDelta / 120) * m_bAlphaStep;
     TRACE("+++ iScrollValue=%d\n", iScrollValue);
 
-    CWnd* pWnd    = WindowFromPoint(pt);
-    CWnd* pWndApp = NULL;
-    BYTE  bAlpha  = 0xFF;
-
-    // TODO: Test with QQ, StickNote, etc.
+    CWnd* pWnd = GetWindowUnderMouseCursor(&pt);
     if (pWnd) {
-        while (TRUE) {
-            pWnd->GetParent();
-            pWndApp = pWnd->GetParent();
-            if (pWndApp) {
-                pWnd = pWndApp;
-            } else {
-                break;
-            }
-        }
-        pWndApp = pWnd;
-
-        GetWindowAlpha(pWndApp, &bAlpha);
         if (iScrollValue > 0) {
-            if (bAlpha < m_bAlphaMax - m_bAlphaStep) {
-                SetWindowAlpha(pWndApp, bAlpha + m_bAlphaStep);
-            } else {
-                SetWindowAlpha(pWndApp, m_bAlphaMax);
-            }
+            IncreaseWindowAlpha(pWnd);
         } else if (iScrollValue < 0) {
-            if (bAlpha >= m_bAlphaMin + m_bAlphaStep) {
-                SetWindowAlpha(pWndApp, bAlpha - m_bAlphaStep);
-            } else {
-                SetWindowAlpha(pWndApp, m_bAlphaMin);
-            }
+            DecreaseWindowAlpha(pWnd);
         }
     }
 
@@ -313,34 +274,48 @@ void CTransGlassDlg::OnBnClickedBtnOpt()
 }
 
 
-bool CTransGlassDlg::GetWindowAlpha(CWnd* pHwnd, BYTE* pbAlpha)
+void CTransGlassDlg::IncreaseWindowAlpha(CWnd* pHwnd)
 {
-    bool bRetVal = true;
+    BYTE bAlpha = 0xFF;
 
-    if ((! pHwnd) || (! pbAlpha)) {
-        bRetVal = false;
-    } else {
-        pHwnd->GetLayeredWindowAttributes(NULL, pbAlpha, NULL);
-        TRACE("+++ %s Alpha=%d\n", __FUNCTION__, *pbAlpha);
+    if (pHwnd) {
+        pHwnd->GetLayeredWindowAttributes(NULL, &bAlpha, NULL);
+        TRACE("+++ %s AlphaGot=%d\n", __FUNCTION__, bAlpha);
+        if (bAlpha < m_bAlphaMax - m_bAlphaStep) {
+            SetWindowAlpha(pHwnd, bAlpha + m_bAlphaStep);
+        } else {
+            SetWindowAlpha(pHwnd, m_bAlphaMax);
+        }
     }
-    return bRetVal;
 }
+
+
+void CTransGlassDlg::DecreaseWindowAlpha(CWnd* pHwnd)
+{
+    BYTE bAlpha = 0xFF;
+
+    if (pHwnd) {
+        pHwnd->GetLayeredWindowAttributes(NULL, &bAlpha, NULL);
+        TRACE("+++ %s AlphaGot=%d\n", __FUNCTION__, bAlpha);
+        if (bAlpha >= m_bAlphaMin + m_bAlphaStep) {
+            SetWindowAlpha(pHwnd, bAlpha - m_bAlphaStep);
+        } else {
+            SetWindowAlpha(pHwnd, m_bAlphaMin);
+        }
+    }
+}
+
 
 void CTransGlassDlg::SetWindowAlpha(CWnd* pHwnd, BYTE bAlpha)
 {
-    if (! pHwnd) {
-        return;
-    }
     HWND hWnd = pHwnd->GetSafeHwnd();
-    if (! hWnd) {
-        return;
+    if (hWnd) {
+        LONG lStyle = ::GetWindowLong(hWnd, GWL_EXSTYLE);
+        if (! (lStyle & WS_EX_LAYERED)) {
+            ::SetWindowLong(hWnd, GWL_EXSTYLE, (lStyle | WS_EX_LAYERED));
+        }
+        pHwnd->SetLayeredWindowAttributes(0, bAlpha, LWA_ALPHA);
     }
-
-    LONG lStyle = ::GetWindowLong(hWnd, GWL_EXSTYLE);
-    if (! (lStyle & WS_EX_LAYERED)) {
-        ::SetWindowLong(hWnd, GWL_EXSTYLE, (lStyle | WS_EX_LAYERED));
-    }
-    pHwnd->SetLayeredWindowAttributes(0, bAlpha, LWA_ALPHA);
 }
 
 
@@ -374,4 +349,31 @@ void CTransGlassDlg::MinimizeToTray()
 {
     ShowWindow(SW_HIDE);
     Shell_NotifyIcon(NIM_ADD, &m_notifyIcon);
+}
+
+
+CWnd* CTransGlassDlg::GetWindowForeground()
+{
+    return GetDesktopWindow()->GetForegroundWindow();
+}
+
+
+CWnd* CTransGlassDlg::GetWindowUnderMouseCursor(LPPOINT lpPt)
+{
+    CWnd* pWndApp = NULL;
+    CWnd* pWndTmp = WindowFromPoint(*lpPt);
+
+    // TODO: Test with QQ, StickNote, etc.
+    if (pWndTmp) {
+        while (TRUE) {
+            pWndApp = pWndTmp->GetParent();
+            if (pWndApp) {
+                pWndTmp = pWndApp;
+            } else {
+                break;
+            }
+        }
+        pWndApp = pWndTmp;
+    }
+    return pWndApp;
 }

@@ -110,6 +110,9 @@ BOOL CTransGlassDlg::OnInitDialog()
     SetIcon(m_hIcon, TRUE);			// Set big icon
     SetIcon(m_hIcon, FALSE);		// Set small icon
 
+    // Update dialog text information.
+    UpdateDlgTextInfo();
+
     // Register hot keys.
     if (theApp.m_pProfileHandler->m_bHotKeyEnable) {
         RegisterHotKeys();
@@ -133,6 +136,7 @@ BOOL CTransGlassDlg::OnInitDialog()
     // Create the tray icon in the system tray.
     InitNotifyIconData();
 
+    // Minimize the window if required.
     if (theApp.m_pProfileHandler->m_bStartMinimized) {
         PostMessage(WM_SYSCOMMAND, SC_CLOSE);
     }
@@ -386,7 +390,98 @@ void CTransGlassDlg::OnBnClickedBtnOpt()
             }
             // Update auto startup setting.
             UpdateSystemReg();
+            // Update text tips on dialog.
+            UpdateDlgTextInfo();
         }
+    }
+}
+
+
+void CTransGlassDlg::UpdateDlgTextInfo()
+{
+    typedef struct {
+        UINT        ctrlId;
+        CStatic**   ppctrlText;
+        CString*    pszText;
+    } eItem_UpdateDlgTextInfo;
+
+    CStatic* pHotKeyTip1(NULL);
+    CStatic* pHotKeyTip2(NULL);
+    CStatic* pMouseWheelTip1(NULL);
+    CStatic* pMouseWheelTip2(NULL);
+    CString  szHotKeyTip1(TEXT(""));
+    CString  szHotKeyTip2(TEXT(""));
+    CString  szMouseWheelTip1(TEXT(""));
+    CString  szMouseWheelTip2(TEXT(""));
+
+    eItem_UpdateDlgTextInfo internalTbl[] = {
+        { IDC_STATIC_HOTKEY_TIP1,     &pHotKeyTip1,     &szHotKeyTip1      },
+        { IDC_STATIC_HOTKEY_TIP2,     &pHotKeyTip2,     &szHotKeyTip2      },
+        { IDC_STATIC_MOUSEWHEEL_TIP1, &pMouseWheelTip1, &szMouseWheelTip1  },
+        { IDC_STATIC_MOUSEWHEEL_TIP2, &pMouseWheelTip2, &szMouseWheelTip2  }
+    };
+    int iTblSize = sizeof(internalTbl) / sizeof(internalTbl[0]);
+
+    for (int i = 0; i < iTblSize; ++i) {
+        *internalTbl[i].ppctrlText = (CStatic*) GetDlgItem(internalTbl[i].ctrlId);
+    }
+
+    if (theApp.m_pProfileHandler->m_bHotKeyEnable) {
+        szHotKeyTip1 = APP_TEXT_HOTKEY_ENABLE;
+        if (theApp.m_pProfileHandler->m_bHotKeyCtrl) {
+            szHotKeyTip2 += APP_TEXT_KEY_CTRL;
+            szHotKeyTip2 += APP_TEXT_KEY_HYPHEN;
+        }
+        if (theApp.m_pProfileHandler->m_bHotKeyAlt) {
+            szHotKeyTip2 += APP_TEXT_KEY_ALT;
+            szHotKeyTip2 += APP_TEXT_KEY_HYPHEN;
+        }
+        if (theApp.m_pProfileHandler->m_bHotKeyShift) {
+            szHotKeyTip2 += APP_TEXT_KEY_SHIFT;
+            szHotKeyTip2 += APP_TEXT_KEY_HYPHEN;
+        }
+        if (theApp.m_pProfileHandler->m_bHotKeyWin) {
+            szHotKeyTip2 += APP_TEXT_KEY_WIN;
+            szHotKeyTip2 += APP_TEXT_KEY_HYPHEN;
+        }
+        if (szHotKeyTip2.GetLength() == 0) {
+            szHotKeyTip2 += APP_TEXT_KEY_NONE;
+            szHotKeyTip2 += APP_TEXT_KEY_HYPHEN;
+        }
+        szHotKeyTip2 += APP_TEXT_KEY_HOTKEY;
+    } else {
+        szHotKeyTip1 = APP_TEXT_HOTKEY_DISABLE;
+    }
+
+    if (theApp.m_pProfileHandler->m_bMouseWheelEnable) {
+        szMouseWheelTip1 = APP_TEXT_MOUSEWHEEL_ENABLE;
+        if (theApp.m_pProfileHandler->m_bMouseWheelCtrl) {
+            szMouseWheelTip2 += APP_TEXT_KEY_CTRL;
+            szMouseWheelTip2 += APP_TEXT_KEY_HYPHEN;
+        }
+        if (theApp.m_pProfileHandler->m_bMouseWheelAlt) {
+            szMouseWheelTip2 += APP_TEXT_KEY_ALT;
+            szMouseWheelTip2 += APP_TEXT_KEY_HYPHEN;
+        }
+        if (theApp.m_pProfileHandler->m_bMouseWheelShift) {
+            szMouseWheelTip2 += APP_TEXT_KEY_SHIFT;
+            szMouseWheelTip2 += APP_TEXT_KEY_HYPHEN;
+        }
+        if (theApp.m_pProfileHandler->m_bMouseWheelWin) {
+            szMouseWheelTip2 += APP_TEXT_KEY_WIN;
+            szMouseWheelTip2 += APP_TEXT_KEY_HYPHEN;
+        }
+        if (szMouseWheelTip2.GetLength() == 0) {
+            szMouseWheelTip2 += APP_TEXT_KEY_NONE;
+            szMouseWheelTip2 += APP_TEXT_KEY_HYPHEN;
+        }
+        szMouseWheelTip2 += APP_TEXT_KEY_MOUSEWHEEL;
+    } else {
+        szMouseWheelTip1 = APP_TEXT_MOUSEWHEEL_DISABLE;
+    }
+
+    for (int i = 0; i < iTblSize; ++i) {
+        (*internalTbl[i].ppctrlText)->SetWindowText(*internalTbl[i].pszText);
     }
 }
 

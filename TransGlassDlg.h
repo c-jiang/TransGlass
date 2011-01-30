@@ -63,6 +63,7 @@ protected:
     DECLARE_MESSAGE_MAP()
 
 private:
+    void UpdateDlgTextInfo();
     void RegisterHotKeys();
     void UnregisterHotKeys();
     void UpdateSystemReg();

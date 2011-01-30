@@ -567,7 +567,19 @@ void CTransGlassDlg::SetWindowAlpha(CWnd* pHwnd, BYTE bAlpha)
     if (hWnd) {
         LONG lStyle = ::GetWindowLong(hWnd, GWL_EXSTYLE);
         if (! (lStyle & WS_EX_LAYERED)) {
-            ::SetWindowLong(hWnd, GWL_EXSTYLE, (lStyle | WS_EX_LAYERED));
+            lStyle |= WS_EX_LAYERED;
+#ifdef DEBUG
+            LONG ret = ::SetWindowLong(hWnd, GWL_EXSTYLE, lStyle);
+            if (! ret) {
+                TRACE("!!! %s - ErrorCode:%lu\n",
+                      __FUNCTION__, ::GetLastError());
+            } else {
+                TRACE("*** %s - NewStyle:0x%08X, PrevStyle:0x%08X\n",
+                      __FUNCTION__, lStyle, ret);
+            }
+#else
+            ::SetWindowLong(hWnd, GWL_EXSTYLE, lStyle);
+#endif
         }
         pHwnd->SetLayeredWindowAttributes(0, bAlpha, LWA_ALPHA);
     }

@@ -54,6 +54,8 @@ protected:
     afx_msg void OnHotKey(UINT nHotKeyId, UINT nKey1, UINT nKey2);
     afx_msg BOOL OnMouseWheel(UINT nFlags, short zDelta, CPoint pt);
     afx_msg LRESULT OnNotifyIcon(WPARAM wParam, LPARAM lParam);
+    afx_msg void OnTrayiconPopupAbout();
+    afx_msg void OnTrayiconPopupOpt();
     afx_msg void OnTrayiconPopupShow();
     afx_msg void OnTrayiconPopupExit();
     afx_msg void OnBnClickedBtnTray();

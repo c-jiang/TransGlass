@@ -72,10 +72,12 @@ BEGIN_MESSAGE_MAP(CTransGlassDlg, CDialogEx)
     ON_WM_HOTKEY()
     ON_WM_MOUSEWHEEL()
     ON_MESSAGE(WM_NOTIFYICON, OnNotifyIcon)
-    ON_COMMAND(IDC_TRAYICON_POPUP_SHOW, &CTransGlassDlg::OnTrayiconPopupShow)
-    ON_COMMAND(IDC_TRAYICON_POPUP_EXIT, &CTransGlassDlg::OnTrayiconPopupExit)
+    ON_COMMAND(IDC_TRAYICON_POPUP_ABOUT,  &CTransGlassDlg::OnTrayiconPopupAbout)
+    ON_COMMAND(IDC_TRAYICON_POPUP_OPT,    &CTransGlassDlg::OnTrayiconPopupOpt)
+    ON_COMMAND(IDC_TRAYICON_POPUP_SHOW,   &CTransGlassDlg::OnTrayiconPopupShow)
+    ON_COMMAND(IDC_TRAYICON_POPUP_EXIT,   &CTransGlassDlg::OnTrayiconPopupExit)
     ON_BN_CLICKED(IDC_BTN_TRAY, &CTransGlassDlg::OnBnClickedBtnTray)
-    ON_BN_CLICKED(IDC_BTN_OPT, &CTransGlassDlg::OnBnClickedBtnOpt)
+    ON_BN_CLICKED(IDC_BTN_OPT,  &CTransGlassDlg::OnBnClickedBtnOpt)
 END_MESSAGE_MAP()
 
 
@@ -164,8 +166,7 @@ void CTransGlassDlg::OnCancel()
 void CTransGlassDlg::OnSysCommand(UINT nID, LPARAM lParam)
 {
     if ((nID & 0xFFF0) == IDM_ABOUTBOX) {
-        CAboutDlg dlgAbout;
-        dlgAbout.DoModal();
+        OnTrayiconPopupAbout();
     } else if ((nID & 0xFFF0) == SC_CLOSE) {
         MinimizeToTray();
     } else {
@@ -281,6 +282,19 @@ LRESULT CTransGlassDlg::OnNotifyIcon(WPARAM wParam, LPARAM lParam)
         break;
     }
     return 0;
+}
+
+
+void CTransGlassDlg::OnTrayiconPopupAbout()
+{
+    CAboutDlg dlgAbout;
+    dlgAbout.DoModal();
+}
+
+
+void CTransGlassDlg::OnTrayiconPopupOpt()
+{
+    OnBnClickedBtnOpt();
 }
 
 

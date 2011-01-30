@@ -72,6 +72,8 @@ BEGIN_MESSAGE_MAP(CTransGlassDlg, CDialogEx)
     ON_WM_HOTKEY()
     ON_WM_MOUSEWHEEL()
     ON_MESSAGE(WM_NOTIFYICON, OnNotifyIcon)
+    ON_COMMAND(IDC_TRAYICON_POPUP_SHOW, &CTransGlassDlg::OnTrayiconPopupShow)
+    ON_COMMAND(IDC_TRAYICON_POPUP_EXIT, &CTransGlassDlg::OnTrayiconPopupExit)
     ON_BN_CLICKED(IDC_BTN_TRAY, &CTransGlassDlg::OnBnClickedBtnTray)
     ON_BN_CLICKED(IDC_BTN_OPT, &CTransGlassDlg::OnBnClickedBtnOpt)
 END_MESSAGE_MAP()
@@ -229,26 +231,10 @@ void CTransGlassDlg::OnHotKey(UINT nHotKeyId, UINT nKey1, UINT nKey2)
 }
 
 
-LRESULT CTransGlassDlg::OnNotifyIcon(WPARAM wParam, LPARAM lParam)
-{
-    TRACE(">>> %s(%u, %lu)\n", __FUNCTION__, wParam, lParam);
-
-    if ((lParam == WM_LBUTTONDOWN) || (lParam == WM_RBUTTONDOWN)) {
-        // TODO
-        ModifyStyleEx(0, WS_EX_TOPMOST);
-        ShowWindow(SW_SHOW);
-        Shell_NotifyIcon(NIM_DELETE, &m_notifyIcon);
-    }
-
-    TRACE("<<< %s(%u, %lu)\n", __FUNCTION__, wParam, lParam);
-    return 0;
-}
-
-
 BOOL CTransGlassDlg::OnMouseWheel(UINT nFlags, short zDelta, CPoint pt)
 {
     TRACE("+++ %s(%u, %u, %u, %u)\n",
-          __FUNCTION__, nFlags, zDelta, pt.x, pt.y);
+        __FUNCTION__, nFlags, zDelta, pt.x, pt.y);
 
     int iScrollValue = (zDelta / 120) * m_bAlphaStep;
     TRACE("+++ iScrollValue=%d\n", iScrollValue);
@@ -263,6 +249,52 @@ BOOL CTransGlassDlg::OnMouseWheel(UINT nFlags, short zDelta, CPoint pt)
     }
 
     return CDialog::OnMouseWheel(nFlags, zDelta, pt);
+}
+
+
+LRESULT CTransGlassDlg::OnNotifyIcon(WPARAM wParam, LPARAM lParam)
+{
+    CMenu menu;
+
+    switch (lParam) {
+    case WM_LBUTTONDBLCLK:
+        OnTrayiconPopupShow();
+        break;
+    case WM_RBUTTONDOWN:
+        if (menu.LoadMenu(IDR_MENU_TRAYICON)) {
+            CMenu *pPopup = menu.GetSubMenu(0);
+            ASSERT(pPopup != NULL);
+#if 0   // Here states the implementation for disabling some menu item.
+            pPopup->EnableMenuItem(IDC_TRAYICON_POPUP_SHOW,
+                                   MF_BYCOMMAND | MF_DISABLED | MF_GRAYED);
+            pPopup->EnableMenuItem(IDC_TRAYICON_POPUP_EXIT,
+                                   MF_BYCOMMAND | MF_DISABLED | MF_GRAYED);
+#endif
+            CPoint pt;
+            GetCursorPos(&pt);
+            SetForegroundWindow();
+            pPopup->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON,
+                                   pt.x, pt.y, this);
+        }
+        break;
+    default:
+        break;
+    }
+    return 0;
+}
+
+
+void CTransGlassDlg::OnTrayiconPopupShow()
+{
+    ModifyStyleEx(0, WS_EX_TOPMOST);
+    ShowWindow(SW_SHOWNORMAL);
+    Shell_NotifyIcon(NIM_DELETE, &m_notifyIcon);
+}
+
+
+void CTransGlassDlg::OnTrayiconPopupExit()
+{
+    ::PostQuitMessage(0);
 }
 
 

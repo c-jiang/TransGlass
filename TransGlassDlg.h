@@ -52,8 +52,10 @@ protected:
     afx_msg void OnPaint();
     afx_msg HCURSOR OnQueryDragIcon();
     afx_msg void OnHotKey(UINT nHotKeyId, UINT nKey1, UINT nKey2);
-    afx_msg LRESULT OnNotifyIcon(WPARAM wParam, LPARAM lParam);
     afx_msg BOOL OnMouseWheel(UINT nFlags, short zDelta, CPoint pt);
+    afx_msg LRESULT OnNotifyIcon(WPARAM wParam, LPARAM lParam);
+    afx_msg void OnTrayiconPopupShow();
+    afx_msg void OnTrayiconPopupExit();
     afx_msg void OnBnClickedBtnTray();
     afx_msg void OnBnClickedBtnOpt();
     DECLARE_MESSAGE_MAP()

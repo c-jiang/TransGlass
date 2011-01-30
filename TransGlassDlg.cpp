@@ -163,7 +163,8 @@ BOOL CTransGlassDlg::DestroyWindow()
 
 void CTransGlassDlg::OnCancel()
 {
-    // Hook: disable ESC for exiting the app.
+    // Make <ESC> minimize App to tray.
+    PostMessage(WM_SYSCOMMAND, SC_CLOSE);
 }
 
 

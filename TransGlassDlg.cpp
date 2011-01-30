@@ -216,33 +216,28 @@ HCURSOR CTransGlassDlg::OnQueryDragIcon()
 void CTransGlassDlg::OnHotKey(UINT nHotKeyId, UINT nKey1, UINT nKey2)
 {
     TRACE(">>> %s(%u, %u, %u)\n", __FUNCTION__, nHotKeyId, nKey1, nKey2);
+    CWnd* pHwnd = GetWindowForeground();
 
-    CWnd* pHwnd  = NULL;
-
+    TRACE("--- pWnd:0x%08X\n", pHwnd->GetSafeHwnd());
     switch (nHotKeyId) {
     case HOTKEY_ID_WINDOW_ALPHA_INC:
-        pHwnd = GetWindowForeground();
         IncreaseWindowAlpha(pHwnd);
         break;
     case HOTKEY_ID_WINDOW_ALPHA_DEC:
-        pHwnd = GetWindowForeground();
         DecreaseWindowAlpha(pHwnd);
         break;
     default:
         break;
     }
-
     TRACE("<<< %s(%u, %u, %u)\n", __FUNCTION__, nHotKeyId, nKey1, nKey2);
 }
 
 
 BOOL CTransGlassDlg::OnMouseWheel(UINT nFlags, short zDelta, CPoint pt)
 {
-    TRACE("+++ %s(%u, %u, %u, %u)\n",
-        __FUNCTION__, nFlags, zDelta, pt.x, pt.y);
-
     int iScrollValue = (zDelta / 120) * m_bAlphaStep;
-    TRACE("+++ iScrollValue=%d\n", iScrollValue);
+    TRACE("+++ %s(%u, %d, [%ld, %ld])\n",
+          __FUNCTION__, nFlags, iScrollValue, pt.x, pt.y);
 
     CWnd* pWnd = GetWindowUnderMouseCursor(&pt);
     if (pWnd) {
@@ -620,20 +615,30 @@ CWnd* CTransGlassDlg::GetWindowForeground()
 
 CWnd* CTransGlassDlg::GetWindowUnderMouseCursor(LPPOINT lpPt)
 {
-    CWnd* pWndApp = NULL;
-    CWnd* pWndTmp = WindowFromPoint(*lpPt);
+    TRACE(">>> %s([%ld, %ld])\n", __FUNCTION__, lpPt->x, lpPt->y);
+    CWnd* pHwnd = WindowFromPoint(*lpPt);
+    TRACE("--- pHwnd:0x%08X\n", pHwnd->GetSafeHwnd());
 
-    // TODO: Test with QQ, StickNote, etc.
-    if (pWndTmp) {
+    if (pHwnd) {
         while (TRUE) {
-            pWndApp = pWndTmp->GetParent();
-            if (pWndApp) {
-                pWndTmp = pWndApp;
-            } else {
+            LONG lStyle = ::GetWindowLong(pHwnd->GetSafeHwnd(), GWL_STYLE);
+            if (! (lStyle & WS_CHILDWINDOW)) {
                 break;
+            } else {
+                pHwnd = pHwnd->GetParent();
+                if (! pHwnd) {
+                    break;
+                }
             }
         }
-        pWndApp = pWndTmp;
     }
-    return pWndApp;
+    TRACE("<<< %s([%ld, %ld])\n", __FUNCTION__, lpPt->x, lpPt->y);
+#ifdef DEBUG
+    if (pHwnd) {
+        TRACE("    @@:0x%08X\n", pHwnd->GetSafeHwnd());
+    } else {
+        TRACE("    @@:NULL\n");
+    }
+#endif
+    return pHwnd;
 }

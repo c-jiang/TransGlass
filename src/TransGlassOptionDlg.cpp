@@ -4,7 +4,6 @@
 #include "stdafx.h"
 #include "TransGlass.h"
 #include "TransGlassOptionDlg.h"
-#include "afxdialogex.h"
 
 
 // CTransGlassOptionDlg dialog

@@ -7,7 +7,6 @@
 #include "TransGlassDlg.h"
 #include "TransGlassOptionDlg.h"
 #include "ThreadMouseHook.h"
-#include "afxdialogex.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW

@@ -20,6 +20,7 @@ protected:
 
     afx_msg void OnBnClickedCheckHotkey();
     afx_msg void OnBnClickedCheckMousewheel();
+    afx_msg void OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar);
 
     DECLARE_MESSAGE_MAP()
 
@@ -38,4 +39,7 @@ public:
 
     BOOL m_bStartMinimized;
     BOOL m_bAutoStartup;
+
+    int  m_iAlphaLowLimit;
+    int  m_iAlphaGranularity;
 };

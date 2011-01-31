@@ -27,7 +27,6 @@ public:
         HOTKEY_ID_END
     };
 
-    static const BYTE   m_bAlphaMaxValue = 0xFF;
     BYTE                m_bAlphaLowLimit;
     BYTE                m_bAlphaGranularity;
     ThreadMouseHook*    m_threadMouseHook;

@@ -25,6 +25,8 @@ CTransGlassOptionDlg::CTransGlassOptionDlg(CWnd* pParent /*=NULL*/)
     , m_bMouseWheelWin      (FALSE)
     , m_bStartMinimized     (FALSE)
     , m_bAutoStartup        (FALSE)
+    , m_iAlphaGranularity   (0)
+    , m_iAlphaLowLimit      (0)
 {
 }
 
@@ -52,15 +54,42 @@ void CTransGlassOptionDlg::DoDataExchange(CDataExchange* pDX)
 
     DDX_Check(pDX, IDC_CHECK_MINIMIZED,         m_bStartMinimized);
     DDX_Check(pDX, IDC_CHECK_AUTOSTARTUP,       m_bAutoStartup);
+
+    DDX_Slider(pDX, IDC_SLIDER_LOWLIMIT,        m_iAlphaLowLimit);
+    DDX_Slider(pDX, IDC_SLIDER_GRANULARITY,     m_iAlphaGranularity);
+	DDV_MinMaxInt(pDX, m_iAlphaLowLimit,    APP_ALPHA_VALUE_MIN, APP_ALPHA_VALUE_MAX);
+    DDV_MinMaxInt(pDX, m_iAlphaGranularity, APP_ALPHA_VALUE_MIN, APP_ALPHA_VALUE_MAX);
 }
 
 
 BOOL CTransGlassOptionDlg::OnInitDialog()
 {
     CDialog::OnInitDialog();
+    CSliderCtrl* pSlider = NULL;
+    CString szStr;
 
     OnBnClickedCheckHotkey();
     OnBnClickedCheckMousewheel();
+
+    pSlider = (CSliderCtrl*) GetDlgItem(IDC_SLIDER_LOWLIMIT);
+    ASSERT(pSlider != NULL);
+    pSlider->SetRange(APP_ALPHA_VALUE_MIN, APP_ALPHA_VALUE_MAX, TRUE);
+    pSlider->SetLineSize(1);
+    pSlider->SetPageSize(10);
+    pSlider->SetTicFreq(8);
+    pSlider->SetPos(m_iAlphaLowLimit);
+    szStr.Format(TEXT("%d"), pSlider->GetPos());
+    ((CStatic*) GetDlgItem(IDC_TEXT_LOWLIMIT))->SetWindowText(szStr);
+
+    pSlider = (CSliderCtrl*) GetDlgItem(IDC_SLIDER_GRANULARITY);
+    ASSERT(pSlider != NULL);
+    pSlider->SetRange(APP_ALPHA_VALUE_MIN, APP_ALPHA_VALUE_MAX, TRUE);
+    pSlider->SetLineSize(1);
+    pSlider->SetPageSize(10);
+    pSlider->SetTicFreq(8);
+    pSlider->SetPos(m_iAlphaGranularity);
+    szStr.Format(TEXT("%d"), pSlider->GetPos());
+    ((CStatic*) GetDlgItem(IDC_TEXT_GRANULARITY))->SetWindowText(szStr);
 
     return TRUE;  // return TRUE unless you set the focus to a control
     // EXCEPTION: OCX Property Pages should return FALSE
@@ -70,6 +99,7 @@ BOOL CTransGlassOptionDlg::OnInitDialog()
 BEGIN_MESSAGE_MAP(CTransGlassOptionDlg, CDialog)
     ON_BN_CLICKED(IDC_CHECK_HOTKEY,     &CTransGlassOptionDlg::OnBnClickedCheckHotkey)
     ON_BN_CLICKED(IDC_CHECK_MOUSEWHEEL, &CTransGlassOptionDlg::OnBnClickedCheckMousewheel)
+    ON_WM_HSCROLL()
 END_MESSAGE_MAP()
 
 
@@ -101,5 +131,22 @@ void CTransGlassOptionDlg::OnBnClickedCheckMousewheel()
     BOOL bChecked = ((CButton*) GetDlgItem(IDC_CHECK_MOUSEWHEEL))->GetCheck();
     for (int i = 0; i < sizeof(idGroup) / sizeof(idGroup[0]); ++i) {
         ((CButton*) GetDlgItem(idGroup[i]))->EnableWindow(bChecked);
+    }
+}
+
+
+void CTransGlassOptionDlg::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
+{
+    CDialog::OnHScroll(nSBCode, nPos, pScrollBar);
+
+    CString szStr;
+    if (pScrollBar == GetDlgItem(IDC_SLIDER_LOWLIMIT)) {
+        CStatic* pText = (CStatic*) GetDlgItem(IDC_TEXT_LOWLIMIT);
+        szStr.Format(TEXT("%d"), ((CSliderCtrl*) pScrollBar)->GetPos());
+        pText->SetWindowText(szStr);
+    } else if (pScrollBar == GetDlgItem(IDC_SLIDER_GRANULARITY)) {
+        CStatic* pText = (CStatic*) GetDlgItem(IDC_TEXT_GRANULARITY);
+        szStr.Format(TEXT("%d"), ((CSliderCtrl*) pScrollBar)->GetPos());
+        pText->SetWindowText(szStr);
     }
 }

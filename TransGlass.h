@@ -29,6 +29,9 @@
 #define APP_TEXT_KEY_HOTKEY         TEXT("<Arrow Key Up/Down>")
 #define APP_TEXT_KEY_MOUSEWHEEL     TEXT("<Mouse Wheel Up/Down>")
 
+#define APP_ALPHA_VALUE_MAX         0xFF
+#define APP_ALPHA_VALUE_MIN         0x00
+
 
 class CTransGlassApp : public CWinApp
 {

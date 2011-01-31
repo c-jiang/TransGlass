@@ -57,8 +57,9 @@ CTransGlassDlg::CTransGlassDlg(CWnd* pParent /*=NULL*/)
     , m_threadMouseHook   (NULL)
 {
     m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
-    UpdateAlphaConfig(0xFF & theApp.m_pProfileHandler->m_iAlphaLowLimit,
-                      0xFF & theApp.m_pProfileHandler->m_iAlphaGranularity);
+    UpdateAlphaConfig(
+            APP_ALPHA_VALUE_MAX & theApp.m_pProfileHandler->m_iAlphaLowLimit,
+            APP_ALPHA_VALUE_MAX & theApp.m_pProfileHandler->m_iAlphaGranularity);
 }
 
 
@@ -357,7 +358,11 @@ void CTransGlassDlg::OnBnClickedBtnOpt()
     for (int i = 0; i < sizeof(pOptDlgVal) / sizeof(pOptDlgVal[0]); ++i) {
         *pOptDlgVal[i] = *pProfileVal[i];
     }
-    // TODO: Set alpha config values from profile to dialog.
+    // Set alpha config values from profile to dialog.
+    dlg.m_iAlphaLowLimit    = APP_ALPHA_VALUE_MAX
+                              & theApp.m_pProfileHandler->m_iAlphaLowLimit;
+    dlg.m_iAlphaGranularity = APP_ALPHA_VALUE_MAX
+                              & theApp.m_pProfileHandler->m_iAlphaGranularity;
 
     INT_PTR nResponse = dlg.DoModal();
     if (nResponse == IDOK) {
@@ -370,7 +375,20 @@ void CTransGlassDlg::OnBnClickedBtnOpt()
                 bChanged = true;
             }
         }
-        // TODO: Check alpha config values changed or not.
+        if (theApp.m_pProfileHandler->m_iAlphaLowLimit != dlg.m_iAlphaLowLimit) {
+            TRACE("--- LowLimitOld:%d, LowLimitNew:%d\n",
+                  theApp.m_pProfileHandler->m_iAlphaLowLimit,
+                  dlg.m_iAlphaLowLimit);
+            theApp.m_pProfileHandler->m_iAlphaLowLimit = dlg.m_iAlphaLowLimit;
+            bChanged = true;
+        }
+        if (theApp.m_pProfileHandler->m_iAlphaGranularity != dlg.m_iAlphaGranularity) {
+            TRACE("--- GranularityOld:%d, GranularityNew:%d\n",
+                  theApp.m_pProfileHandler->m_iAlphaGranularity,
+                  dlg.m_iAlphaGranularity);
+            theApp.m_pProfileHandler->m_iAlphaGranularity = dlg.m_iAlphaGranularity;
+            bChanged = true;
+        }
 
         if (bChanged) {
             theApp.m_pProfileHandler->WriteProfile();
@@ -394,8 +412,8 @@ void CTransGlassDlg::OnBnClickedBtnOpt()
             // Update text tips on dialog.
             UpdateDlgTextInfo();
             // Update alpha config.
-            UpdateAlphaConfig(0xFF & theApp.m_pProfileHandler->m_iAlphaLowLimit,
-                              0xFF & theApp.m_pProfileHandler->m_iAlphaGranularity);
+            UpdateAlphaConfig(theApp.m_pProfileHandler->m_iAlphaLowLimit,
+                              theApp.m_pProfileHandler->m_iAlphaGranularity);
         }
     }
 }
@@ -541,16 +559,16 @@ void CTransGlassDlg::UpdateSystemReg()
 
 void CTransGlassDlg::IncreaseWindowAlpha(CWnd* pHwnd)
 {
-    BYTE bAlpha = 0xFF;
+    BYTE bAlpha = APP_ALPHA_VALUE_MAX;
 
     if (pHwnd) {
         pHwnd->GetLayeredWindowAttributes(NULL, &bAlpha, NULL);
         TRACE("+++ %s AlphaOld=%d\n", __FUNCTION__, bAlpha);
-        if ((int) (bAlpha + m_bAlphaGranularity) < (int) m_bAlphaMaxValue) {
+        if ((int) (bAlpha + m_bAlphaGranularity) < APP_ALPHA_VALUE_MAX) {
             SetWindowAlpha(pHwnd, bAlpha + m_bAlphaGranularity);
             TRACE("+++ %s AlphaNew=%d\n", __FUNCTION__, bAlpha + m_bAlphaGranularity);
         } else {
-            SetWindowAlpha(pHwnd, m_bAlphaMaxValue);
+            SetWindowAlpha(pHwnd, APP_ALPHA_VALUE_MAX);
             TRACE("+++ %s AlphaNew=AlphaMaxValue\n", __FUNCTION__);
         }
     }
@@ -559,7 +577,7 @@ void CTransGlassDlg::IncreaseWindowAlpha(CWnd* pHwnd)
 
 void CTransGlassDlg::DecreaseWindowAlpha(CWnd* pHwnd)
 {
-    BYTE bAlpha = 0xFF;
+    BYTE bAlpha = APP_ALPHA_VALUE_MAX;
 
     if (pHwnd) {
         pHwnd->GetLayeredWindowAttributes(NULL, &bAlpha, NULL);
@@ -603,7 +621,7 @@ void CTransGlassDlg::SetWindowAlpha(CWnd* pHwnd, BYTE bAlpha)
 
 void CTransGlassDlg::UpdateAlphaConfig(BYTE bLowLimit, BYTE bGranularity)
 {
-    int iAlphaMin = (int) m_bAlphaMaxValue;
+    int iAlphaMin = APP_ALPHA_VALUE_MAX;
 
     m_bAlphaLowLimit    = bLowLimit;
     m_bAlphaGranularity = bGranularity;

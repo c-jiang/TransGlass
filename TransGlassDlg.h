@@ -40,9 +40,9 @@ protected:
     NOTIFYICONDATA  m_notifyIcon;
 
     // Generated message map functions
-    virtual BOOL OnInitDialog();
-    virtual BOOL DestroyWindow();
-    virtual void OnCancel();
+    virtual BOOL    OnInitDialog();
+    virtual BOOL    DestroyWindow();
+    virtual void    OnCancel();
 
     afx_msg void    OnSysCommand(UINT nID, LPARAM lParam);
     afx_msg void    OnPaint();
@@ -66,7 +66,7 @@ private:
     void  IncreaseWindowAlpha(CWnd* pHwnd);
     void  DecreaseWindowAlpha(CWnd* pHwnd);
     void  SetWindowAlpha(CWnd* pHwnd, BYTE bAlpha);
-    void  UpdateAlphaConfig(BYTE bLowLimit, BYTE bGranularity);
+    void  UpdateLocalAlphaConfig();
     void  InitNotifyIconData();
     void  MinimizeToTray();
     CWnd* GetWindowForeground();

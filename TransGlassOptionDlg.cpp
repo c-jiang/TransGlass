@@ -57,8 +57,8 @@ void CTransGlassOptionDlg::DoDataExchange(CDataExchange* pDX)
 
     DDX_Slider(pDX, IDC_SLIDER_LOWLIMIT,        m_iAlphaLowLimit);
     DDX_Slider(pDX, IDC_SLIDER_GRANULARITY,     m_iAlphaGranularity);
-	DDV_MinMaxInt(pDX, m_iAlphaLowLimit,    APP_ALPHA_VALUE_MIN, APP_ALPHA_VALUE_MAX);
-    DDV_MinMaxInt(pDX, m_iAlphaGranularity, APP_ALPHA_VALUE_MIN, APP_ALPHA_VALUE_MAX);
+	DDV_MinMaxInt(pDX, m_iAlphaLowLimit,    APP_ALPHA_MIN, APP_ALPHA_MAX);
+    DDV_MinMaxInt(pDX, m_iAlphaGranularity, APP_ALPHA_MIN, APP_ALPHA_MAX);
 }
 
 
@@ -73,20 +73,20 @@ BOOL CTransGlassOptionDlg::OnInitDialog()
 
     pSlider = (CSliderCtrl*) GetDlgItem(IDC_SLIDER_LOWLIMIT);
     ASSERT(pSlider != NULL);
-    pSlider->SetRange(APP_ALPHA_VALUE_MIN, APP_ALPHA_VALUE_MAX, TRUE);
+    pSlider->SetRange(APP_ALPHA_MIN, APP_ALPHA_MAX, FALSE);
     pSlider->SetLineSize(1);
-    pSlider->SetPageSize(10);
-    pSlider->SetTicFreq(8);
+    pSlider->SetPageSize(5);
+    pSlider->SetTicFreq(5);
     pSlider->SetPos(m_iAlphaLowLimit);
     szStr.Format(TEXT("%d"), pSlider->GetPos());
     ((CStatic*) GetDlgItem(IDC_TEXT_LOWLIMIT))->SetWindowText(szStr);
 
     pSlider = (CSliderCtrl*) GetDlgItem(IDC_SLIDER_GRANULARITY);
     ASSERT(pSlider != NULL);
-    pSlider->SetRange(APP_ALPHA_VALUE_MIN, APP_ALPHA_VALUE_MAX, TRUE);
+    pSlider->SetRange(APP_ALPHA_MIN, APP_ALPHA_MAX, FALSE);
     pSlider->SetLineSize(1);
-    pSlider->SetPageSize(10);
-    pSlider->SetTicFreq(8);
+    pSlider->SetPageSize(5);
+    pSlider->SetTicFreq(5);
     pSlider->SetPos(m_iAlphaGranularity);
     szStr.Format(TEXT("%d"), pSlider->GetPos());
     ((CStatic*) GetDlgItem(IDC_TEXT_GRANULARITY))->SetWindowText(szStr);

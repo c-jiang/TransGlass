@@ -57,9 +57,7 @@ CTransGlassDlg::CTransGlassDlg(CWnd* pParent /*=NULL*/)
     , m_threadMouseHook   (NULL)
 {
     m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
-    UpdateAlphaConfig(
-            APP_ALPHA_VALUE_MAX & theApp.m_pProfileHandler->m_iAlphaLowLimit,
-            APP_ALPHA_VALUE_MAX & theApp.m_pProfileHandler->m_iAlphaGranularity);
+    UpdateLocalAlphaConfig();
 }
 
 
@@ -359,13 +357,12 @@ void CTransGlassDlg::OnBnClickedBtnOpt()
         *pOptDlgVal[i] = *pProfileVal[i];
     }
     // Set alpha config values from profile to dialog.
-    dlg.m_iAlphaLowLimit    = APP_ALPHA_VALUE_MAX
+    dlg.m_iAlphaLowLimit    = APP_ALPHA_MAX
                               & theApp.m_pProfileHandler->m_iAlphaLowLimit;
-    dlg.m_iAlphaGranularity = APP_ALPHA_VALUE_MAX
+    dlg.m_iAlphaGranularity = APP_ALPHA_MAX
                               & theApp.m_pProfileHandler->m_iAlphaGranularity;
 
-    INT_PTR nResponse = dlg.DoModal();
-    if (nResponse == IDOK) {
+    if (dlg.DoModal() == IDOK) {
         // Update the user profile here.
         UpdateData(TRUE);
         bool bChanged = false;
@@ -412,8 +409,7 @@ void CTransGlassDlg::OnBnClickedBtnOpt()
             // Update text tips on dialog.
             UpdateDlgTextInfo();
             // Update alpha config.
-            UpdateAlphaConfig(theApp.m_pProfileHandler->m_iAlphaLowLimit,
-                              theApp.m_pProfileHandler->m_iAlphaGranularity);
+            UpdateLocalAlphaConfig();
         }
     }
 }
@@ -559,16 +555,16 @@ void CTransGlassDlg::UpdateSystemReg()
 
 void CTransGlassDlg::IncreaseWindowAlpha(CWnd* pHwnd)
 {
-    BYTE bAlpha = APP_ALPHA_VALUE_MAX;
+    BYTE bAlpha = APP_ALPHA_MAX;
 
     if (pHwnd) {
         pHwnd->GetLayeredWindowAttributes(NULL, &bAlpha, NULL);
         TRACE("+++ %s AlphaOld=%d\n", __FUNCTION__, bAlpha);
-        if ((int) (bAlpha + m_bAlphaGranularity) < APP_ALPHA_VALUE_MAX) {
+        if ((int) (bAlpha + m_bAlphaGranularity) < APP_ALPHA_MAX) {
             SetWindowAlpha(pHwnd, bAlpha + m_bAlphaGranularity);
             TRACE("+++ %s AlphaNew=%d\n", __FUNCTION__, bAlpha + m_bAlphaGranularity);
         } else {
-            SetWindowAlpha(pHwnd, APP_ALPHA_VALUE_MAX);
+            SetWindowAlpha(pHwnd, APP_ALPHA_MAX);
             TRACE("+++ %s AlphaNew=AlphaMaxValue\n", __FUNCTION__);
         }
     }
@@ -577,7 +573,7 @@ void CTransGlassDlg::IncreaseWindowAlpha(CWnd* pHwnd)
 
 void CTransGlassDlg::DecreaseWindowAlpha(CWnd* pHwnd)
 {
-    BYTE bAlpha = APP_ALPHA_VALUE_MAX;
+    BYTE bAlpha = APP_ALPHA_MAX;
 
     if (pHwnd) {
         pHwnd->GetLayeredWindowAttributes(NULL, &bAlpha, NULL);
@@ -619,12 +615,25 @@ void CTransGlassDlg::SetWindowAlpha(CWnd* pHwnd, BYTE bAlpha)
 }
 
 
-void CTransGlassDlg::UpdateAlphaConfig(BYTE bLowLimit, BYTE bGranularity)
+void CTransGlassDlg::UpdateLocalAlphaConfig()
 {
-    int iAlphaMin = APP_ALPHA_VALUE_MAX;
+    int iAlphaMin = APP_ALPHA_MAX;
 
-    m_bAlphaLowLimit    = bLowLimit;
-    m_bAlphaGranularity = bGranularity;
+    if (theApp.m_pProfileHandler->m_iAlphaLowLimit > APP_ALPHA_MAX) {
+        m_bAlphaLowLimit = APP_ALPHA_MAX;
+    } else if (theApp.m_pProfileHandler->m_iAlphaLowLimit < APP_ALPHA_MIN) {
+        m_bAlphaLowLimit = APP_ALPHA_MIN;
+    } else {
+        m_bAlphaLowLimit = theApp.m_pProfileHandler->m_iAlphaLowLimit;
+    }
+
+    if (theApp.m_pProfileHandler->m_iAlphaGranularity > APP_ALPHA_MAX) {
+        m_bAlphaGranularity = APP_ALPHA_MAX;
+    } else if (theApp.m_pProfileHandler->m_iAlphaGranularity < APP_ALPHA_MIN) {
+        m_bAlphaGranularity = APP_ALPHA_MIN;
+    } else {
+        m_bAlphaGranularity = theApp.m_pProfileHandler->m_iAlphaGranularity;
+    }
 
     while (iAlphaMin >= (int) m_bAlphaLowLimit) {
         iAlphaMin -= (int) m_bAlphaGranularity;

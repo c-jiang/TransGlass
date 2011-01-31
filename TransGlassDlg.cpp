@@ -545,11 +545,13 @@ void CTransGlassDlg::IncreaseWindowAlpha(CWnd* pHwnd)
 
     if (pHwnd) {
         pHwnd->GetLayeredWindowAttributes(NULL, &bAlpha, NULL);
-        TRACE("+++ %s AlphaGot=%d\n", __FUNCTION__, bAlpha);
-        if (bAlpha < m_bAlphaMaxValue - m_bAlphaGranularity) {
+        TRACE("+++ %s AlphaOld=%d\n", __FUNCTION__, bAlpha);
+        if ((int) (bAlpha + m_bAlphaGranularity) < (int) m_bAlphaMaxValue) {
             SetWindowAlpha(pHwnd, bAlpha + m_bAlphaGranularity);
+            TRACE("+++ %s AlphaNew=%d\n", __FUNCTION__, bAlpha + m_bAlphaGranularity);
         } else {
             SetWindowAlpha(pHwnd, m_bAlphaMaxValue);
+            TRACE("+++ %s AlphaNew=AlphaMaxValue\n", __FUNCTION__);
         }
     }
 }
@@ -561,11 +563,13 @@ void CTransGlassDlg::DecreaseWindowAlpha(CWnd* pHwnd)
 
     if (pHwnd) {
         pHwnd->GetLayeredWindowAttributes(NULL, &bAlpha, NULL);
-        TRACE("+++ %s AlphaGot=%d\n", __FUNCTION__, bAlpha);
-        if (bAlpha >= m_bAlphaLowLimit + m_bAlphaGranularity) {
+        TRACE("+++ %s AlphaOld=%d\n", __FUNCTION__, bAlpha);
+        if ((int) bAlpha >= (int) (m_bAlphaLowLimit + m_bAlphaGranularity)) {
             SetWindowAlpha(pHwnd, bAlpha - m_bAlphaGranularity);
+            TRACE("+++ %s AlphaNew=%d\n", __FUNCTION__, bAlpha - m_bAlphaGranularity);
         } else {
             SetWindowAlpha(pHwnd, m_bAlphaLowLimit);
+            TRACE("+++ %s AlphaNew=AlphaLowLimit\n", __FUNCTION__);
         }
     }
 }

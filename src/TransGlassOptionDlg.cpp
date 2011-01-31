@@ -56,7 +56,7 @@ void CTransGlassOptionDlg::DoDataExchange(CDataExchange* pDX)
 
     DDX_Slider(pDX, IDC_SLIDER_LOWLIMIT,        m_iAlphaLowLimit);
     DDX_Slider(pDX, IDC_SLIDER_GRANULARITY,     m_iAlphaGranularity);
-	DDV_MinMaxInt(pDX, m_iAlphaLowLimit,    APP_ALPHA_MIN, APP_ALPHA_MAX);
+    DDV_MinMaxInt(pDX, m_iAlphaLowLimit,    APP_ALPHA_MIN, APP_ALPHA_MAX);
     DDV_MinMaxInt(pDX, m_iAlphaGranularity, APP_ALPHA_MIN, APP_ALPHA_MAX);
 }
 

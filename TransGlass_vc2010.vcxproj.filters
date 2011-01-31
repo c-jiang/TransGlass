@@ -19,7 +19,7 @@
     <None Include="res\TransGlass.rc2">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="res\TransGlass.ico">
+    <None Include="res\Icon_Star.ico">
       <Filter>Resource Files</Filter>
     </None>
   </ItemGroup>

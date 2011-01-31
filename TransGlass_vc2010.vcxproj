@@ -97,7 +97,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <None Include="ReadMe_vc2010.txt" />
-    <None Include="res\TransGlass.ico" />
+    <None Include="res\Icon_Star.ico" />
     <None Include="res\TransGlass.rc2" />
   </ItemGroup>
   <ItemGroup>

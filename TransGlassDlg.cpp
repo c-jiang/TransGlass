@@ -565,7 +565,7 @@ void CTransGlassDlg::IncreaseWindowAlpha(CWnd* pHwnd)
             TRACE("+++ %s AlphaNew=%d\n", __FUNCTION__, bAlpha + m_bAlphaGranularity);
         } else {
             SetWindowAlpha(pHwnd, APP_ALPHA_MAX);
-            TRACE("+++ %s AlphaNew=AlphaMaxValue\n", __FUNCTION__);
+            TRACE("+++ %s AlphaNew=AlphaMaxValue(%d)\n", __FUNCTION__, APP_ALPHA_MAX);
         }
     }
 }
@@ -583,7 +583,7 @@ void CTransGlassDlg::DecreaseWindowAlpha(CWnd* pHwnd)
             TRACE("+++ %s AlphaNew=%d\n", __FUNCTION__, bAlpha - m_bAlphaGranularity);
         } else {
             SetWindowAlpha(pHwnd, m_bAlphaLowLimit);
-            TRACE("+++ %s AlphaNew=AlphaLowLimit\n", __FUNCTION__);
+            TRACE("+++ %s AlphaNew=AlphaLowLimit(%d)\n", __FUNCTION__, m_bAlphaLowLimit);
         }
     }
 }

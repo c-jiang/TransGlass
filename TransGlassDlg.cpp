@@ -52,8 +52,8 @@ END_MESSAGE_MAP()
 
 CTransGlassDlg::CTransGlassDlg(CWnd* pParent /*=NULL*/)
     : CDialogEx(CTransGlassDlg::IDD, pParent)
-    , m_bAlphaGranularity (0)
-    , m_bAlphaLowLimit    (0)
+    , m_bAlphaGranularity (APP_ALPHA_MIN)
+    , m_bAlphaLowLimit    (APP_ALPHA_MIN)
     , m_threadMouseHook   (NULL)
 {
     m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
@@ -69,6 +69,7 @@ void CTransGlassDlg::DoDataExchange(CDataExchange* pDX)
 
 BEGIN_MESSAGE_MAP(CTransGlassDlg, CDialogEx)
     ON_WM_SYSCOMMAND()
+    ON_WM_HELPINFO()
     ON_WM_PAINT()
     ON_WM_QUERYDRAGICON()
     ON_WM_HOTKEY()
@@ -181,10 +182,17 @@ void CTransGlassDlg::OnSysCommand(UINT nID, LPARAM lParam)
     }
 }
 
+
+BOOL CTransGlassDlg::OnHelpInfo(HELPINFO* pHelpInfo)
+{
+    // Disable <F1> for help information.
+    return FALSE;
+}
+
+
 // If you add a minimize button to your dialog, you will need the code below
 //  to draw the icon.  For MFC applications using the document/view model,
 //  this is automatically done for you by the framework.
-
 void CTransGlassDlg::OnPaint()
 {
     if (IsIconic()) {

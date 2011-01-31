@@ -1,8 +1,11 @@
 
 *.aps
-*.suo
-*.sdf
+*.ncb
 *.opensdf
+*.sdf
+*.suo
+*.user
 /ipch
 /Debug
 /Release
+

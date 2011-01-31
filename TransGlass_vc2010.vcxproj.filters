@@ -15,7 +15,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <None Include="ReadMe.txt" />
+    <None Include="ReadMe_vc2010.txt" />
     <None Include="res\TransGlass.rc2">
       <Filter>Resource Files</Filter>
     </None>

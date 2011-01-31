@@ -53,14 +53,12 @@ ProfileHandler::ProfileHandler(CString& szProfilePath)
 {
     TRACE(">>> %s\n", __FUNCTION__);
     TRACE(TEXT("+++ %s\n"), m_szProfilePath);
-
     CFileStatus status;
 
     if (! CFile::GetStatus(m_szProfilePath, status)) {
         GenerateDefaultProfile();
     }
     ReadProfile();
-
     TRACE("<<< %s\n", __FUNCTION__);
 }
 
@@ -231,6 +229,7 @@ int ProfileHandler::GetMouseWheelCombination()
 CString ProfileHandler::Util_Int2CString(int iVal)
 {
     CString szOut;
+
     szOut.Format(TEXT("%d"), iVal);
     return szOut;
 }

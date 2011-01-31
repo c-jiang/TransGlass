@@ -4,9 +4,10 @@
 
 #pragma once
 
+#include "ThreadMouseHook.h"
+
 
 // Declaration
-class ThreadMouseHook;
 
 
 // CTransGlassDlg dialog
@@ -26,49 +27,49 @@ public:
         HOTKEY_ID_END
     };
 
-    static const BYTE m_bAlphaMaxValue = 0xFF;
-    BYTE              m_bAlphaLowLimit;
-    BYTE              m_bAlphaGranularity;
-    ThreadMouseHook*  m_threadMouseHook;
+    static const BYTE   m_bAlphaMaxValue = 0xFF;
+    BYTE                m_bAlphaLowLimit;
+    BYTE                m_bAlphaGranularity;
+    ThreadMouseHook*    m_threadMouseHook;
 
 protected:
     virtual void DoDataExchange(CDataExchange* pDX);	// DDX/DDV support
 
 // Implementation
 protected:
-    HICON m_hIcon;
-    NOTIFYICONDATA m_notifyIcon;
+    HICON           m_hIcon;
+    NOTIFYICONDATA  m_notifyIcon;
 
     // Generated message map functions
     virtual BOOL OnInitDialog();
     virtual BOOL DestroyWindow();
     virtual void OnCancel();
 
-    afx_msg void OnSysCommand(UINT nID, LPARAM lParam);
-    afx_msg void OnPaint();
+    afx_msg void    OnSysCommand(UINT nID, LPARAM lParam);
+    afx_msg void    OnPaint();
     afx_msg HCURSOR OnQueryDragIcon();
-    afx_msg void OnHotKey(UINT nHotKeyId, UINT nKey1, UINT nKey2);
-    afx_msg BOOL OnMouseWheel(UINT nFlags, short zDelta, CPoint pt);
+    afx_msg void    OnHotKey(UINT nHotKeyId, UINT nKey1, UINT nKey2);
+    afx_msg BOOL    OnMouseWheel(UINT nFlags, short zDelta, CPoint pt);
     afx_msg LRESULT OnNotifyIcon(WPARAM wParam, LPARAM lParam);
-    afx_msg void OnTrayiconPopupAbout();
-    afx_msg void OnTrayiconPopupOpt();
-    afx_msg void OnTrayiconPopupShow();
-    afx_msg void OnTrayiconPopupExit();
-    afx_msg void OnBnClickedBtnTray();
-    afx_msg void OnBnClickedBtnOpt();
+    afx_msg void    OnTrayiconPopupAbout();
+    afx_msg void    OnTrayiconPopupOpt();
+    afx_msg void    OnTrayiconPopupShow();
+    afx_msg void    OnTrayiconPopupExit();
+    afx_msg void    OnBnClickedBtnTray();
+    afx_msg void    OnBnClickedBtnOpt();
     DECLARE_MESSAGE_MAP()
 
 private:
-    void UpdateDlgTextInfo();
-    void RegisterHotKeys();
-    void UnregisterHotKeys();
-    void UpdateSystemReg();
-    void IncreaseWindowAlpha(CWnd* pHwnd);
-    void DecreaseWindowAlpha(CWnd* pHwnd);
-    void SetWindowAlpha(CWnd* pHwnd, BYTE bAlpha);
-    void UpdateAlphaConfig(BYTE bLowLimit, BYTE bGranularity);
-    void InitNotifyIconData();
-    void MinimizeToTray();
+    void  UpdateDlgTextInfo();
+    void  RegisterHotKeys();
+    void  UnregisterHotKeys();
+    void  UpdateSystemReg();
+    void  IncreaseWindowAlpha(CWnd* pHwnd);
+    void  DecreaseWindowAlpha(CWnd* pHwnd);
+    void  SetWindowAlpha(CWnd* pHwnd, BYTE bAlpha);
+    void  UpdateAlphaConfig(BYTE bLowLimit, BYTE bGranularity);
+    void  InitNotifyIconData();
+    void  MinimizeToTray();
     CWnd* GetWindowForeground();
     CWnd* GetWindowUnderMouseCursor(LPPOINT lpPt);
 };

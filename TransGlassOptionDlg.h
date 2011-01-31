@@ -18,10 +18,10 @@ protected:
     virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
     virtual BOOL OnInitDialog();
 
-    DECLARE_MESSAGE_MAP()
-
     afx_msg void OnBnClickedCheckHotkey();
     afx_msg void OnBnClickedCheckMousewheel();
+
+    DECLARE_MESSAGE_MAP()
 
 public:
     BOOL m_bHotKeyEnable;

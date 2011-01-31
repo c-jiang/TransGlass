@@ -34,6 +34,7 @@ CTransGlassApp::~CTransGlassApp()
 {
     if (m_pProfileHandler) {
         delete m_pProfileHandler;
+        m_pProfileHandler = NULL;
     }
 }
 

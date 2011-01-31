@@ -25,12 +25,12 @@ ThreadMouseHook::~ThreadMouseHook()
 }
 
 
-DWORD ThreadMouseHook::s_dwThreadID(NULL);
-HHOOK ThreadMouseHook::s_hHook(NULL);
-BOOL  ThreadMouseHook::s_bKeyCtrl(FALSE);
-BOOL  ThreadMouseHook::s_bKeyAlt(FALSE);
-BOOL  ThreadMouseHook::s_bKeyShift(FALSE);
-BOOL  ThreadMouseHook::s_bKeyWin(FALSE);
+DWORD ThreadMouseHook::s_dwThreadID (NULL);
+HHOOK ThreadMouseHook::s_hHook      (NULL);
+BOOL  ThreadMouseHook::s_bKeyCtrl   (FALSE);
+BOOL  ThreadMouseHook::s_bKeyAlt    (FALSE);
+BOOL  ThreadMouseHook::s_bKeyShift  (FALSE);
+BOOL  ThreadMouseHook::s_bKeyWin    (FALSE);
 
 
 BOOL ThreadMouseHook::EnableHook(HWND hWnd)

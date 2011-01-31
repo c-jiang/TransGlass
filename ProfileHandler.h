@@ -26,8 +26,8 @@ public:
     INT  m_iAlphaLowLimit;
 
 protected:
-    int GetHotKeyCombination();
-    int GetMouseWheelCombination();
+    int     GetHotKeyCombination();
+    int     GetMouseWheelCombination();
     CString Util_Int2CString(int iVal);
 
     CString m_szProfilePath;

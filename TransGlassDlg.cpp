@@ -97,7 +97,7 @@ BOOL CTransGlassDlg::OnInitDialog()
     ASSERT(IDM_ABOUTBOX < 0xF000);
 
     CMenu* pSysMenu = GetSystemMenu(FALSE);
-    if (pSysMenu != NULL) {
+    if (pSysMenu) {
         BOOL bNameValid;
         CString strAboutMenu;
         bNameValid = strAboutMenu.LoadString(IDS_ABOUTBOX);
@@ -198,7 +198,7 @@ void CTransGlassDlg::OnPaint()
         int cyIcon = GetSystemMetrics(SM_CYICON);
         CRect rect;
         GetClientRect(&rect);
-        int x = (rect.Width() - cxIcon + 1) / 2;
+        int x = (rect.Width()  - cxIcon + 1) / 2;
         int y = (rect.Height() - cyIcon + 1) / 2;
 
         // Draw the icon
@@ -251,7 +251,6 @@ BOOL CTransGlassDlg::OnMouseWheel(UINT nFlags, short zDelta, CPoint pt)
             DecreaseWindowAlpha(pWnd);
         }
     }
-
     return CDialog::OnMouseWheel(nFlags, zDelta, pt);
 }
 
@@ -520,6 +519,7 @@ void CTransGlassDlg::UnregisterHotKeys()
 void CTransGlassDlg::UpdateSystemReg()
 {
     HKEY hKey;
+
     if (ERROR_SUCCESS == RegOpenKey(HKEY_CURRENT_USER,
                                     APPLICATION_REG_PATH,
                                     &hKey)) {
@@ -578,6 +578,7 @@ void CTransGlassDlg::DecreaseWindowAlpha(CWnd* pHwnd)
 void CTransGlassDlg::SetWindowAlpha(CWnd* pHwnd, BYTE bAlpha)
 {
     HWND hWnd = pHwnd->GetSafeHwnd();
+
     if (hWnd) {
         LONG lStyle = ::GetWindowLong(hWnd, GWL_EXSTYLE);
         if (! (lStyle & WS_EX_LAYERED)) {
@@ -602,10 +603,11 @@ void CTransGlassDlg::SetWindowAlpha(CWnd* pHwnd, BYTE bAlpha)
 
 void CTransGlassDlg::UpdateAlphaConfig(BYTE bLowLimit, BYTE bGranularity)
 {
+    int iAlphaMin = (int) m_bAlphaMaxValue;
+
     m_bAlphaLowLimit    = bLowLimit;
     m_bAlphaGranularity = bGranularity;
 
-    int iAlphaMin = (int) m_bAlphaMaxValue;
     while (iAlphaMin >= (int) m_bAlphaLowLimit) {
         iAlphaMin -= (int) m_bAlphaGranularity;
     }

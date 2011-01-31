@@ -19,7 +19,7 @@
 
 // CAboutDlg dialog used for App About
 
-class CAboutDlg : public CDialogEx
+class CAboutDlg : public CDialog
 {
 public:
     CAboutDlg();
@@ -35,23 +35,23 @@ protected:
     DECLARE_MESSAGE_MAP()
 };
 
-CAboutDlg::CAboutDlg() : CDialogEx(CAboutDlg::IDD)
+CAboutDlg::CAboutDlg() : CDialog(CAboutDlg::IDD)
 {
 }
 
 void CAboutDlg::DoDataExchange(CDataExchange* pDX)
 {
-    CDialogEx::DoDataExchange(pDX);
+    CDialog::DoDataExchange(pDX);
 }
 
-BEGIN_MESSAGE_MAP(CAboutDlg, CDialogEx)
+BEGIN_MESSAGE_MAP(CAboutDlg, CDialog)
 END_MESSAGE_MAP()
 
 
 // CTransGlassDlg dialog
 
 CTransGlassDlg::CTransGlassDlg(CWnd* pParent /*=NULL*/)
-    : CDialogEx(CTransGlassDlg::IDD, pParent)
+    : CDialog(CTransGlassDlg::IDD, pParent)
     , m_bAlphaGranularity (APP_ALPHA_MIN)
     , m_bAlphaLowLimit    (APP_ALPHA_MIN)
     , m_threadMouseHook   (NULL)
@@ -63,11 +63,11 @@ CTransGlassDlg::CTransGlassDlg(CWnd* pParent /*=NULL*/)
 
 void CTransGlassDlg::DoDataExchange(CDataExchange* pDX)
 {
-    CDialogEx::DoDataExchange(pDX);
+    CDialog::DoDataExchange(pDX);
 }
 
 
-BEGIN_MESSAGE_MAP(CTransGlassDlg, CDialogEx)
+BEGIN_MESSAGE_MAP(CTransGlassDlg, CDialog)
     ON_WM_SYSCOMMAND()
     ON_WM_HELPINFO()
     ON_WM_PAINT()
@@ -88,7 +88,7 @@ END_MESSAGE_MAP()
 
 BOOL CTransGlassDlg::OnInitDialog()
 {
-    CDialogEx::OnInitDialog();
+    CDialog::OnInitDialog();
 
     // Add "About..." menu item to system menu.
 
@@ -160,7 +160,7 @@ BOOL CTransGlassDlg::DestroyWindow()
     // Remove the icon in the system tray.
     Shell_NotifyIcon(NIM_DELETE, &m_notifyIcon);
 
-    return CDialogEx::DestroyWindow();
+    return CDialog::DestroyWindow();
 }
 
 
@@ -178,7 +178,7 @@ void CTransGlassDlg::OnSysCommand(UINT nID, LPARAM lParam)
     } else if ((nID & 0xFFF0) == SC_CLOSE) {
         MinimizeToTray();
     } else {
-        CDialogEx::OnSysCommand(nID, lParam);
+        CDialog::OnSysCommand(nID, lParam);
     }
 }
 
@@ -211,7 +211,7 @@ void CTransGlassDlg::OnPaint()
         // Draw the icon
         dc.DrawIcon(x, y, m_hIcon);
     } else {
-        CDialogEx::OnPaint();
+        CDialog::OnPaint();
     }
 }
 

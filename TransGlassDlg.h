@@ -11,7 +11,7 @@
 
 
 // CTransGlassDlg dialog
-class CTransGlassDlg : public CDialogEx
+class CTransGlassDlg : public CDialog
 {
 // Construction
 public:

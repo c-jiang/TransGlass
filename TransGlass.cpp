@@ -21,12 +21,13 @@ END_MESSAGE_MAP()
 CTransGlassApp::CTransGlassApp()
     : m_pProfileHandler(NULL)
 {
-    CString szPath;
-    AfxGetModuleFileName(NULL, szPath);
-    m_szAppPath = szPath;
-    szPath = szPath.Mid(0, szPath.GetLength() - 3) + TEXT("ini");
+    TCHAR tcPath[MAX_PATH];
+    GetModuleFileName(NULL, tcPath, sizeof(tcPath));
+    m_szAppPath = tcPath;
 
-    m_pProfileHandler = new ProfileHandler(szPath);
+    CString szIniPath = m_szAppPath.Mid(0, m_szAppPath.GetLength() - 3)
+                      + TEXT("ini");
+    m_pProfileHandler = new ProfileHandler(szIniPath);
 }
 
 
@@ -67,12 +68,6 @@ BOOL CTransGlassApp::InitInstance()
 
     CWinApp::InitInstance();
 
-#if 0
-    // Create the shell manager, in case the dialog contains
-    // any shell tree view or shell list view controls.
-    CShellManager *pShellManager = new CShellManager;
-#endif
-
     // Standard initialization
     // If you are not using these features and wish to reduce the size
     // of your final executable, you should remove from the following
@@ -88,13 +83,6 @@ BOOL CTransGlassApp::InitInstance()
     }
 #else
     dlg.DoModal();
-#endif
-
-#if 0
-    // Delete the shell manager created above.
-    if (pShellManager != NULL) {
-        delete pShellManager;
-    }
 #endif
 
     // Since the dialog has been closed, return FALSE so that we exit the

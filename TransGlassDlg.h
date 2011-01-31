@@ -26,13 +26,9 @@ public:
         HOTKEY_ID_END
     };
 
-    static const BYTE c_bAlphaDefMin  = 10;
-    static const BYTE c_bAlphaDefMax  = 255;
-    static const BYTE c_bAlphaDefStep = 10;
-
-    BYTE              m_bAlphaStep;
-    BYTE              m_bAlphaMin;
-    BYTE              m_bAlphaMax;
+    static const BYTE m_bAlphaMaxValue = 0xFF;
+    BYTE              m_bAlphaLowLimit;
+    BYTE              m_bAlphaGranularity;
     ThreadMouseHook*  m_threadMouseHook;
 
 protected:
@@ -70,7 +66,7 @@ private:
     void IncreaseWindowAlpha(CWnd* pHwnd);
     void DecreaseWindowAlpha(CWnd* pHwnd);
     void SetWindowAlpha(CWnd* pHwnd, BYTE bAlpha);
-    void UpdateAlphaSteps();
+    void UpdateAlphaConfig(BYTE bLowLimit, BYTE bGranularity);
     void InitNotifyIconData();
     void MinimizeToTray();
     CWnd* GetWindowForeground();

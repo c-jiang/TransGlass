@@ -22,6 +22,8 @@ public:
     BOOL m_bMouseWheelWin;
     BOOL m_bStartMinimized;
     BOOL m_bAutoStartup;
+    INT  m_iAlphaGranularity;
+    INT  m_iAlphaLowLimit;
 
 protected:
     int GetHotKeyCombination();

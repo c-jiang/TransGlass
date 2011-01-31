@@ -10,6 +10,8 @@
 #define PROFILE_KEY_MOUSEWHEEL_COMBINATION  TEXT("MouseWheelCombination")
 #define PROFILE_KEY_START_MINIMIZED         TEXT("Minimized")
 #define PROFILE_KEY_AUTO_STARTUP            TEXT("AutoStartup")
+#define PROFILE_KEY_ALPHA_LOW_LIMIT         TEXT("AlphaLowLimit")
+#define PROFILE_KEY_ALPHA_GRANULARITY       TEXT("AlphaGranularity")
 
 /**
  * MSB  <Ctrl>   <Alt> <Shift>   <Win>  LSB
@@ -28,22 +30,26 @@
                                              KEY_COMBINATION_ALT)
 #define PROFILE_DEF_START_MINIMIZED         1
 #define PROFILE_DEF_AUTO_STARTUP            0
+#define PROFILE_DEF_ALPHA_LOW_LIMIT         10
+#define PROFILE_DEF_ALPHA_GRANULARITY       10
 
 
 ProfileHandler::ProfileHandler(CString& szProfilePath)
-    : m_szProfilePath(szProfilePath)
-    , m_bHotKeyEnable(FALSE)
-    , m_bHotKeyCtrl(FALSE)
-    , m_bHotKeyAlt(FALSE)
-    , m_bHotKeyShift(FALSE)
-    , m_bHotKeyWin(FALSE)
-    , m_bMouseWheelEnable(FALSE)
-    , m_bMouseWheelCtrl(FALSE)
-    , m_bMouseWheelAlt(FALSE)
-    , m_bMouseWheelShift(FALSE)
-    , m_bMouseWheelWin(FALSE)
-    , m_bStartMinimized(FALSE)
-    , m_bAutoStartup(FALSE)
+    : m_szProfilePath       (szProfilePath)
+    , m_bHotKeyEnable       (FALSE)
+    , m_bHotKeyCtrl         (FALSE)
+    , m_bHotKeyAlt          (FALSE)
+    , m_bHotKeyShift        (FALSE)
+    , m_bHotKeyWin          (FALSE)
+    , m_bMouseWheelEnable   (FALSE)
+    , m_bMouseWheelCtrl     (FALSE)
+    , m_bMouseWheelAlt      (FALSE)
+    , m_bMouseWheelShift    (FALSE)
+    , m_bMouseWheelWin      (FALSE)
+    , m_bStartMinimized     (FALSE)
+    , m_bAutoStartup        (FALSE)
+    , m_iAlphaLowLimit      (PROFILE_DEF_ALPHA_LOW_LIMIT)
+    , m_iAlphaGranularity   (PROFILE_DEF_ALPHA_GRANULARITY)
 {
     TRACE(">>> %s\n", __FUNCTION__);
     TRACE(TEXT("+++ %s\n"), m_szProfilePath);
@@ -109,6 +115,18 @@ void ProfileHandler::ReadProfile()
                                 PROFILE_DEF_AUTO_STARTUP,
                                 m_szProfilePath);
     m_bAutoStartup = (BOOL) iVal;
+
+    iVal = GetPrivateProfileInt(PROFILE_APPNAME,
+                                PROFILE_KEY_ALPHA_LOW_LIMIT,
+                                PROFILE_DEF_ALPHA_LOW_LIMIT,
+                                m_szProfilePath);
+    m_iAlphaLowLimit = iVal;
+
+    iVal = GetPrivateProfileInt(PROFILE_APPNAME,
+                                PROFILE_KEY_ALPHA_GRANULARITY,
+                                PROFILE_DEF_ALPHA_GRANULARITY,
+                                m_szProfilePath);
+    m_iAlphaGranularity = iVal;
 }
 
 
@@ -138,6 +156,14 @@ void ProfileHandler::WriteProfile()
     WritePrivateProfileString(PROFILE_APPNAME,
                               PROFILE_KEY_AUTO_STARTUP,
                               Util_Int2CString(m_bAutoStartup),
+                              m_szProfilePath);
+    WritePrivateProfileString(PROFILE_APPNAME,
+                              PROFILE_KEY_ALPHA_LOW_LIMIT,
+                              Util_Int2CString(m_iAlphaLowLimit),
+                              m_szProfilePath);
+    WritePrivateProfileString(PROFILE_APPNAME,
+                              PROFILE_KEY_ALPHA_GRANULARITY,
+                              Util_Int2CString(m_iAlphaGranularity),
                               m_szProfilePath);
     TRACE("<<< %s\n", __FUNCTION__);
 }
@@ -169,6 +195,14 @@ void ProfileHandler::GenerateDefaultProfile()
     WritePrivateProfileString(PROFILE_APPNAME,
                               PROFILE_KEY_AUTO_STARTUP,
                               Util_Int2CString(PROFILE_DEF_AUTO_STARTUP),
+                              m_szProfilePath);
+    WritePrivateProfileString(PROFILE_APPNAME,
+                              PROFILE_KEY_ALPHA_LOW_LIMIT,
+                              Util_Int2CString(PROFILE_DEF_ALPHA_LOW_LIMIT),
+                              m_szProfilePath);
+    WritePrivateProfileString(PROFILE_APPNAME,
+                              PROFILE_KEY_ALPHA_GRANULARITY,
+                              Util_Int2CString(PROFILE_DEF_ALPHA_GRANULARITY),
                               m_szProfilePath);
     TRACE("<<< %s\n", __FUNCTION__);
 }

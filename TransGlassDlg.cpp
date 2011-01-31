@@ -52,10 +52,13 @@ END_MESSAGE_MAP()
 
 CTransGlassDlg::CTransGlassDlg(CWnd* pParent /*=NULL*/)
     : CDialogEx(CTransGlassDlg::IDD, pParent)
-    , m_threadMouseHook(NULL)
+    , m_bAlphaGranularity (0)
+    , m_bAlphaLowLimit    (0)
+    , m_threadMouseHook   (NULL)
 {
     m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
-    UpdateAlphaSteps();
+    UpdateAlphaConfig(0xFF & theApp.m_pProfileHandler->m_iAlphaLowLimit,
+                      0xFF & theApp.m_pProfileHandler->m_iAlphaGranularity);
 }
 
 
@@ -236,7 +239,7 @@ void CTransGlassDlg::OnHotKey(UINT nHotKeyId, UINT nKey1, UINT nKey2)
 
 BOOL CTransGlassDlg::OnMouseWheel(UINT nFlags, short zDelta, CPoint pt)
 {
-    int iScrollValue = (zDelta / 120) * m_bAlphaStep;
+    int iScrollValue = (zDelta / 120) * m_bAlphaGranularity;
     TRACE("+++ %s(%u, %d, [%ld, %ld])\n",
           __FUNCTION__, nFlags, iScrollValue, pt.x, pt.y);
 
@@ -355,6 +358,7 @@ void CTransGlassDlg::OnBnClickedBtnOpt()
     for (int i = 0; i < sizeof(pOptDlgVal) / sizeof(pOptDlgVal[0]); ++i) {
         *pOptDlgVal[i] = *pProfileVal[i];
     }
+    // TODO: Set alpha config values from profile to dialog.
 
     INT_PTR nResponse = dlg.DoModal();
     if (nResponse == IDOK) {
@@ -367,6 +371,8 @@ void CTransGlassDlg::OnBnClickedBtnOpt()
                 bChanged = true;
             }
         }
+        // TODO: Check alpha config values changed or not.
+
         if (bChanged) {
             theApp.m_pProfileHandler->WriteProfile();
             // Update hot key setting.
@@ -388,6 +394,9 @@ void CTransGlassDlg::OnBnClickedBtnOpt()
             UpdateSystemReg();
             // Update text tips on dialog.
             UpdateDlgTextInfo();
+            // Update alpha config.
+            UpdateAlphaConfig(0xFF & theApp.m_pProfileHandler->m_iAlphaLowLimit,
+                              0xFF & theApp.m_pProfileHandler->m_iAlphaGranularity);
         }
     }
 }
@@ -537,10 +546,10 @@ void CTransGlassDlg::IncreaseWindowAlpha(CWnd* pHwnd)
     if (pHwnd) {
         pHwnd->GetLayeredWindowAttributes(NULL, &bAlpha, NULL);
         TRACE("+++ %s AlphaGot=%d\n", __FUNCTION__, bAlpha);
-        if (bAlpha < m_bAlphaMax - m_bAlphaStep) {
-            SetWindowAlpha(pHwnd, bAlpha + m_bAlphaStep);
+        if (bAlpha < m_bAlphaMaxValue - m_bAlphaGranularity) {
+            SetWindowAlpha(pHwnd, bAlpha + m_bAlphaGranularity);
         } else {
-            SetWindowAlpha(pHwnd, m_bAlphaMax);
+            SetWindowAlpha(pHwnd, m_bAlphaMaxValue);
         }
     }
 }
@@ -553,10 +562,10 @@ void CTransGlassDlg::DecreaseWindowAlpha(CWnd* pHwnd)
     if (pHwnd) {
         pHwnd->GetLayeredWindowAttributes(NULL, &bAlpha, NULL);
         TRACE("+++ %s AlphaGot=%d\n", __FUNCTION__, bAlpha);
-        if (bAlpha >= m_bAlphaMin + m_bAlphaStep) {
-            SetWindowAlpha(pHwnd, bAlpha - m_bAlphaStep);
+        if (bAlpha >= m_bAlphaLowLimit + m_bAlphaGranularity) {
+            SetWindowAlpha(pHwnd, bAlpha - m_bAlphaGranularity);
         } else {
-            SetWindowAlpha(pHwnd, m_bAlphaMin);
+            SetWindowAlpha(pHwnd, m_bAlphaLowLimit);
         }
     }
 }
@@ -587,16 +596,16 @@ void CTransGlassDlg::SetWindowAlpha(CWnd* pHwnd, BYTE bAlpha)
 }
 
 
-void CTransGlassDlg::UpdateAlphaSteps()
+void CTransGlassDlg::UpdateAlphaConfig(BYTE bLowLimit, BYTE bGranularity)
 {
-    m_bAlphaStep = c_bAlphaDefStep;
-    m_bAlphaMax  = c_bAlphaDefMax;
+    m_bAlphaLowLimit    = bLowLimit;
+    m_bAlphaGranularity = bGranularity;
 
-    int iAlphaMin = (int) c_bAlphaDefMax;
-    while (iAlphaMin > (int) c_bAlphaDefMin) {
-        iAlphaMin -= (int) m_bAlphaStep;
+    int iAlphaMin = (int) m_bAlphaMaxValue;
+    while (iAlphaMin >= (int) m_bAlphaLowLimit) {
+        iAlphaMin -= (int) m_bAlphaGranularity;
     }
-    m_bAlphaMin = (BYTE) (iAlphaMin + m_bAlphaStep);
+    m_bAlphaLowLimit = (BYTE) (iAlphaMin + m_bAlphaGranularity);
 }
 
 

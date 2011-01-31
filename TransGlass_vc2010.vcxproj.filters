@@ -24,53 +24,53 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="TransGlass.h">
+    <ClInclude Include="src\TransGlass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="TransGlassDlg.h">
+    <ClInclude Include="src\TransGlassDlg.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="stdafx.h">
+    <ClInclude Include="src\stdafx.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="targetver.h">
+    <ClInclude Include="src\targetver.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Resource.h">
+    <ClInclude Include="src\Resource.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ThreadMouseHook.h">
+    <ClInclude Include="src\ThreadMouseHook.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="TransGlassOptionDlg.h">
+    <ClInclude Include="src\TransGlassOptionDlg.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ProfileHandler.h">
+    <ClInclude Include="src\ProfileHandler.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="TransGlass.cpp">
+    <ClCompile Include="src\TransGlass.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="TransGlassDlg.cpp">
+    <ClCompile Include="src\TransGlassDlg.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="stdafx.cpp">
+    <ClCompile Include="src\stdafx.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ThreadMouseHook.cpp">
+    <ClCompile Include="src\ThreadMouseHook.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="TransGlassOptionDlg.cpp">
+    <ClCompile Include="src\TransGlassOptionDlg.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ProfileHandler.cpp">
+    <ClCompile Include="src\ProfileHandler.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="TransGlass.rc">
+    <ResourceCompile Include="src\TransGlass.rc">
       <Filter>Resource Files</Filter>
     </ResourceCompile>
   </ItemGroup>

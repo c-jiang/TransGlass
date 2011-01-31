@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TransGlass", "TransGlass.vcxproj", "{D2EF9D99-5A1A-4EA8-AF2F-D870A2D1C25F}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TransGlass", "TransGlass_vc2010.vcxproj", "{D2EF9D99-5A1A-4EA8-AF2F-D870A2D1C25F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

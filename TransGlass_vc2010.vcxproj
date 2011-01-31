@@ -99,35 +99,35 @@
     <None Include="res\TransGlass.rc2" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="ProfileHandler.h" />
-    <ClInclude Include="Resource.h" />
-    <ClInclude Include="stdafx.h" />
-    <ClInclude Include="targetver.h" />
-    <ClInclude Include="ThreadMouseHook.h" />
-    <ClInclude Include="TransGlass.h" />
-    <ClInclude Include="TransGlassDlg.h" />
-    <ClInclude Include="TransGlassOptionDlg.h" />
+    <ClInclude Include="src\ProfileHandler.h" />
+    <ClInclude Include="src\Resource.h" />
+    <ClInclude Include="src\stdafx.h" />
+    <ClInclude Include="src\targetver.h" />
+    <ClInclude Include="src\ThreadMouseHook.h" />
+    <ClInclude Include="src\TransGlass.h" />
+    <ClInclude Include="src\TransGlassDlg.h" />
+    <ClInclude Include="src\TransGlassOptionDlg.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="ProfileHandler.cpp" />
-    <ClCompile Include="stdafx.cpp">
+    <ClCompile Include="src\ProfileHandler.cpp" />
+    <ClCompile Include="src\stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="ThreadMouseHook.cpp" />
-    <ClCompile Include="TransGlass.cpp" />
-    <ClCompile Include="TransGlassDlg.cpp" />
-    <ClCompile Include="TransGlassOptionDlg.cpp" />
+    <ClCompile Include="src\ThreadMouseHook.cpp" />
+    <ClCompile Include="src\TransGlass.cpp" />
+    <ClCompile Include="src\TransGlassDlg.cpp" />
+    <ClCompile Include="src\TransGlassOptionDlg.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="TransGlass.rc" />
+    <ResourceCompile Include="src\TransGlass.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties RESOURCE_FILE="TransGlass.rc" />
+      <UserProperties RESOURCE_FILE="src\TransGlass.rc" />
     </VisualStudio>
   </ProjectExtensions>
 </Project>

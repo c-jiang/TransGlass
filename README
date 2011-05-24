@@ -1,0 +1,30 @@
+TransGlass - Window Translucent Utility for Windows Platform
+
+
+To obtain the latest version of TransGlass, please check out:
+- https://github.com/c-jiang/TransGlass
+
+TransGlass is a daemon utility so as to enable window translucent on Windows
+Platform. It lets you manipulate the translucency by mouse-wheel or pressing
+hotkeys, according to your customized settings.
+
+
+Known Issues
+--------------------------------------------------------------------------------
+- It works better on Windows Vista/7 than Windows XP.
+- Window created by WPF lib can not be made translucent because of Microsoft
+  restriction. For more details, please refer to:
+  http://blogs.msdn.com/b/dwayneneed/archive/2008/09/08/transparent-windows-in-wpf.aspx
+- TransGlass is run with user privilege, which cannot manipulate Window with
+  administrator privilege. User can run TransGlass with administrator privilege
+  so as to resolve this issue tentatively.
+
+--------------------------------------------------------------------------------
+
+
+Changelog
+--------------------------------------------------------------------------------
+v1.0.1
+- Migrate from personal repository to GitHub.
+
+--------------------------------------------------------------------------------

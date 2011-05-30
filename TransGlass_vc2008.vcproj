@@ -270,10 +270,6 @@
 			UniqueIdentifier="{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}"
 			>
 			<File
-				RelativePath=".\res\Icon_Star.ico"
-				>
-			</File>
-			<File
 				RelativePath=".\src\TransGlass.rc"
 				>
 			</File>
@@ -282,10 +278,6 @@
 				>
 			</File>
 		</Filter>
-		<File
-			RelativePath=".\ReadMe_vc2008.txt"
-			>
-		</File>
 	</Files>
 	<Globals>
 	</Globals>

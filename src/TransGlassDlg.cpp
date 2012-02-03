@@ -137,6 +137,7 @@ BOOL CTransGlassDlg::OnInitDialog()
 
     // Create the tray icon in the system tray.
     InitNotifyIconData();
+    Shell_NotifyIcon(NIM_ADD, &m_notifyIcon);
 
     // Minimize the window if required.
     if (theApp.m_pProfileHandler->m_bStartMinimized) {
@@ -266,8 +267,12 @@ LRESULT CTransGlassDlg::OnNotifyIcon(WPARAM wParam, LPARAM lParam)
     CMenu menu;
 
     switch (lParam) {
-    case WM_LBUTTONDBLCLK:
-        OnTrayiconPopupShow();
+    case WM_LBUTTONDOWN:
+        if (IsWindowVisible()) {
+            MinimizeToTray();
+        } else {
+            OnTrayiconPopupShow();
+        }
         break;
     case WM_RBUTTONDOWN:
         if (menu.LoadMenu(IDR_MENU_TRAYICON)) {
@@ -310,7 +315,6 @@ void CTransGlassDlg::OnTrayiconPopupShow()
 {
     ModifyStyleEx(0, WS_EX_TOPMOST);
     ShowWindow(SW_SHOWNORMAL);
-    Shell_NotifyIcon(NIM_DELETE, &m_notifyIcon);
 }
 
 
@@ -665,7 +669,6 @@ void CTransGlassDlg::InitNotifyIconData()
 void CTransGlassDlg::MinimizeToTray()
 {
     ShowWindow(SW_HIDE);
-    Shell_NotifyIcon(NIM_ADD, &m_notifyIcon);
 }
 
 

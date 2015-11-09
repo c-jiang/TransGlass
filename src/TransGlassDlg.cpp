@@ -549,7 +549,6 @@ void CTransGlassDlg::UpdateSystemReg()
                                     APPLICATION_REG_PATH,
                                     &hKey)) {
         if (theApp.m_pProfileHandler->m_bAutoStartup) {
-            CString szStr("Hello,world!");
             RegSetValueEx(hKey,
                           APPLICATION_REG_NAME,
                           0,
